@@ -1,4 +1,5 @@
-[In, Out] = loadheart('/Users/kevinryan/Documents/DataScienceMSc/MachineLearning/Coursework/heart.csv'); % see script file loadhear.m
+
+[In, Out] = load_heart_csv('heart.csv','numeric','table');
 
 par = devicespec(); % see script file devicespec.m
 

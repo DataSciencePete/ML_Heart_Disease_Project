@@ -1,6 +1,33 @@
-[X, y] = load_heart_csv('heart.csv','numeric');
+%[X, y] = load_heart_csv('heart.csv','numeric','table');
+[X,y] = loadheart('heart.csv');
 
-mdl = fitcnb(X,y);
+%% Set up Cross validation
+tic % time how long it takes process to run
+
+%%
+
+%data partition
+cp = cvpartition(X,'KFold',10); % Create 10-folds cross-validation partition for data. Each subsample has roughly equal size and roughly the same class proportions as in GROUP 
+
+%%
+
+
+%prediction function to be supplied to crossval function
+classF = @(XTRAIN,YTRAIN,XTEST)(predict(fitncb(XTRAIN,YTRAIN),XTEST));
+
+order = unique(y); % Order of the group labels
+confusionF = @(XTRAIN,YTRAIN,XTEST,YTEST)(confusionmat(YTEST,...
+                                                       cellfun(@str2num,... % convert cell array of character vectors to a cell array of numerics
+                                                       predict(fitncb(XTRAIN,YTRAIN),XTEST)),...
+                                                       'order', order));
+% missclassification error 
+missclasfError = crossval('mcr',X,y,'predfun',classF,'partition',cp);
+cfMat = crossval(confusionF,In,Out,'partition',cp); % Matrix shows number of correctly and incorrectly classified samples for each classification for each of the 10 cross validated data sets
+cfMat = reshape(sum(cfMat),2,2); % summation of the 10 confusion matrices over the 10CV data sets
+% Generate confusion matrix
+confusionchart(cfMat, {'Healthy'; 'Heart_Disease'})
+toc
+
 
 %% Cross validation
 rng(1); % fix seed to 1
