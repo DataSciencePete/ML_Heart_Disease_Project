@@ -1,7 +1,7 @@
 # ML_Heart_Disease_Project
 
 ## Contents
-[Prerequisites](#Prerequisites)
+[Prerequisites](#prerequisites)
 ### devicespec.m
 ### loadheart.m
 ### RF_2_2018_10_04.m
