@@ -21,7 +21,7 @@ confusionF = @(XTRAIN,YTRAIN,XTEST,YTEST)(confusionmat(YTEST,...
                                                        predict(TreeBagger(50,XTRAIN,YTRAIN,...
                                                                           'Method','classification',...
                                                                           'OOBVarImp','On',...
-                                                                          'Options',paroptions...
+                                                                          'Options',par...
                                                                          ),...
                                                                 XTEST...
                                                                )),...
@@ -40,35 +40,44 @@ toc
 %%
 % Bayesian Optimisation
 
-maxMinLS = 20;
+% Min No of Observations per leaf
+maxMinLS = 50;
 minLS = optimizableVariable('minLS',[1,maxMinLS],'Type','integer');
-numPTS = optimizableVariable('numPTS',[1,size(In,2)],'Type','integer'); % define number of predictors
+% No of variables to consider at each split in the tree
+numPTS = optimizableVariable('numPTS',[1,size(In_high_imp_variables,2)],'Type','integer'); % define number of predictors
 hyperparametersRF = [minLS; numPTS];
 
 % Also also consider tuning the number of trees in the ensemble
 
 
-function oobErr = oobErrRF(params,X)
-%oobErrRF Trains random forest and estimates out-of-bag quantile error
-%   oobErr trains a random forest of 300 regression trees using the
-%   predictor data in X and the parameter specification in params, and then
-%   returns the out-of-bag quantile error based on the median. X is a table
-%   and params is an array of OptimizableVariable objects corresponding to
-%   the minimum leaf size and number of predictors to sample at each node.
-randomForest = TreeBagger(300,X,'MPG','Method','regression',...
-    'OOBPrediction','on','MinLeafSize',params.minLS,...
-    'NumPredictorstoSample',params.numPTS);
-oobErr = oobQuantileError(randomForest);
-end
 
-results = bayesopt(@(params)oobErrRF(params,X),hyperparametersRF,...
-    'AcquisitionFunctionName','expected-improvement-plus','Verbose',0);
 
+results = bayesopt(@(params)Optimisation(params,In_high_imp_variables,Out),hyperparametersRF,'AcquisitionFunctionName','expected-improvement-plus','Verbose',0);
+
+
+
+%% Bayesian Opimisation with Cross validation
+
+results = bayesopt(@(params)myCVlossfcn(params,In_high_imp_variables,Out,par),hyperparametersRF, 'AcquisitionFunctionName', 'probability-of-improvement', 'IsObjectiveDeterministic', true, 'MaxObjectiveEvaluations', 40);
+
+results = bayesopt(@(params)myCVlossfcn(params,In_high_imp_variables,Out,par),hyperparametersRF, 'MaxObjectiveEvaluations', 300);
+
+
+%% Grid Search Random Forest approach
+
+minLS_grid = linspace(1,20,20);  % Min No of observations per leaf (paramter search space)
+numPTS_grid = linspace(1,size(In,2),size(In,2)); % Number of variables to select at random for each decision split (paramter search space)
+
+[LS,P] = ndgrid(minLS_grid, numPTS_grid); % Parameter grid
+
+fitresult = arrayfun(@(p1,p2) fittingfunction(p1,p2), F, S); %run a fitting on every pair fittingfunction(F(J,K), S(J,K))
+result_grid = arrayfun(@(l,p)myCVlossfcn_grid(l,p,In,Out,par), LS, P);
 %%
 % testmodel = TreeBagger(50,In,Out,...
 %           'Method','classification',...
 %           'OOBVarImp','On',...
-%           'Options',paroptions...
+%           'Options',par,...
+%           'OOBPredictorImportance','on'...
 %           )
 % checkpredict = predict(testmodel, In)
 % 
