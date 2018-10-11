@@ -32,7 +32,7 @@ Current hyperparamters being explore are:
  Performs hyperparameter grid search looking at hyperparameters MinLeafSize and NumPredictorsToSample. Uses myCVlossfcn_grid.m function script to generate mcr values.
  
 ## RF_PredImp_3_2018_10_10.m
-Performs
+Performs k-fold CV using RF analysis to calculate predictor importance for all included variables. Predictor importance is calculated for each k-fold sample and then average values are calulated for each predictor. Average values are then displayed in a bar chart. 
   
 ## myCVlossfcn.m
 ## Optimisation.m
