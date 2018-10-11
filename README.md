@@ -2,7 +2,7 @@
 
 ## Contents
 1. [Prerequisites](#prerequisites)
-2. [devicespec.m](##devicespec.m)
+2. [devicespec.m](#devicespecm)
 3. [loadheart.m](#loadheart.m)
 4. [RF_2_2018_10_04.m](#RF_2_2018_10_04.m)
 5. [RF_PredImp_3_2018_10_10.m](#RF_PredImp_3_2018_10_10.m)
