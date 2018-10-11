@@ -3,7 +3,8 @@
 par = devicespec(); % see script file devicespec.m
 
 
-%% Set up Cross validation using Random Forest see https://uk.mathworks.com/help/stats/treebagger.html for hyperparameter settings and https://uk.mathworks.com/matlabcentral/answers/34771-classifier for code
+%% Section 1
+% Set up Cross validation using Random Forest see https://uk.mathworks.com/help/stats/treebagger.html for hyperparameter settings and https://uk.mathworks.com/matlabcentral/answers/34771-classifier for code
 tic % time how long it takes process to run
 
 %data partition
@@ -37,7 +38,7 @@ confusionchart(cfMat, {'Healthy'; 'Heart_Disease'})
 toc
 
 
-%%
+%% Section 2
 % Bayesian Optimisation
 
 % Min No of Observations per leaf
@@ -56,14 +57,14 @@ results = bayesopt(@(params)Optimisation(params,In_high_imp_variables,Out),hyper
 
 
 
-%% Bayesian Opimisation with Cross validation
+%% Section 3 Bayesian Opimisation with Cross validation
 
 results = bayesopt(@(params)myCVlossfcn(params,In_high_imp_variables,Out,par),hyperparametersRF, 'AcquisitionFunctionName', 'probability-of-improvement', 'IsObjectiveDeterministic', true, 'MaxObjectiveEvaluations', 40);
 
 results = bayesopt(@(params)myCVlossfcn(params,In_high_imp_variables,Out,par),hyperparametersRF, 'MaxObjectiveEvaluations', 300);
 
 
-%% Grid Search Random Forest approach
+%% Section 4 Grid Search Random Forest approach
 
 minLS_grid = linspace(1,20,20);  % Min No of observations per leaf (paramter search space)
 numPTS_grid = linspace(1,size(In,2),size(In,2)); % Number of variables to select at random for each decision split (paramter search space)
