@@ -20,9 +20,21 @@ Contains the following sections:
 1. Section 1
   Sets up 10-fold CV and performs RF analysis using Treebagger model. Calculates Misclassification Rate (mcr). Also generates confusion matrix based on the summation of the 10 test set predictions generated for each CV model.
 2. Section 2
-  Performs Bayesian optimisation on a treebagger model using all the data (Not using CV). Uses Optimsation.m function script to calculate OOB error and to update the Acquisition function defining the argmax for the Optimisation Function.
+  Performs Bayesian optimisation on a treebagger model using all the data (Not using CV). Matlab bayesopt uses **Optimsation.m** function script to calculate mcr and to update the Acquisition function defining the argmax for the Optimisation Function. Current hyperparamters being explore are:
+  * MinLeafSize (Minimum number of observations per tree leaf)
+  * NumPredictorsToSample (Number of variables to select at random for each decision split)
+3. Section 3
+  Performs Bayesian optimisation USING k-fold cross validation. Calculates mcr over each fold sample and then calculates an average mcr over all k fold samples. Matlab bayesopt uses **myCVlossfcn.m** function script as its optimisation function to calculate mcr and to update the Acquisition function defining the argmax for the Optimisation Function.
+Current hyperparamters being explore are:
+  * MinLeafSize (Minimum number of observations per tree leaf)
+  * NumPredictorsToSample (Number of variables to select at random for each decision split)
+4. Section 4
+ Performs hyperparameter grid search looking at hyperparameters MinLeafSize and NumPredictorsToSample. Uses **myCVlossfcn_grid.m** function script to generate mcr values.
+ 
+## RF_PredImp_3_2018_10_10.m
+Performs k-fold CV using RF analysis to calculate predictor importance for all included variables. Predictor importance is calculated for each k-fold sample and then average values are calulated for each predictor. Average values are then displayed in a bar chart. 
+  
 ## myCVlossfcn.m
 ## Optimisation.m
 
 
-RF_PredImp_3_2018_10_10.m
