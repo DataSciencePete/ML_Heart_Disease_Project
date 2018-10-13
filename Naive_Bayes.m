@@ -4,7 +4,8 @@
 %tic % time how long it takes process to run
 
 %data partition
-cp = cvpartition(y,'KFold',10); % Create 10-folds cross-validation partition for data. Each subsample has roughly equal size and roughly the same class proportions as in GROUP
+cp = cvpartition(y,'KFold',10); % Create 10-fold CV for data. Each fold has 
+%roughly equal size and roughly the same class proportions as in GROUP
 
 %prediction function to be supplied to crossval function
 classF = @(XTRAIN,YTRAIN,XTEST)(predict(fitcnb(XTRAIN,YTRAIN),XTEST));
@@ -32,5 +33,20 @@ cfMat = reshape(sum(cfMat),2,2); % summation of the 10 confusion matrices over t
 
 %toc
 
+%%
+%Grid search or Bayesian optimisation across params. Suggested
+%optimisations:
 
+% kernel or gaussian distribution
+%width for kernel distribution
+% mn for all variables
+
+
+dist = optimizableVariable('dst_name',{'normal','kernel'},'Type','categorical');
+
+cvlossfcn = @(x)kfoldLoss(fitncb(X,y,'CVPartition',cp,'DistributionNames',x.dst_name),'lossfun','classiferror');
+
+resukts = bayesopt(cvlossfcn,dist);
+
+%%
 
