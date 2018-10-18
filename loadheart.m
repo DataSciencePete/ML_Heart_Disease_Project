@@ -53,6 +53,16 @@ fclose(fileID);
 %% Create output variable
 heart = table(dataArray{1:end-1}, 'VariableNames', {'age','sex','cp','trestbps','chol','fbs','restecg','thalach','exang','oldpeak','slope','ca','thal','target'});
 
+heart.sex = categorical(heart.sex);
+heart.cp = categorical(heart.cp);
+heart.fbs = categorical(heart.fbs);
+heart.restecg = categorical(heart.restecg);
+heart.exang = categorical(heart.exang);
+heart.slope = categorical(heart.slope);
+heart.thal = categorical(heart.thal);
+heart.target = categorical(heart.target);
+
+
 %% Clear temporary variables
 clearvars filename delimiter startRow formatSpec fileID dataArray ans;
 
