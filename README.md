@@ -1,4 +1,22 @@
 # ML_Heart_Disease_Project
+
+## Contents
+1. [Prerequisites](#prerequisites)
+2. [devicespec.m](#devicespecm)
+3. [loadheart.m](#loadheartm)
+4. [RF_2_2018_10_04.m](#rf_2_2018_10_04m)
+5. [RF_PredImp_3_2018_10_10.m](#rf_predimp_3_2018_10_10m)
+6. [Authors](#authors)
+7. [License](#license)
+
+
+
+## Prerequisites
+* Require Matlab version 2018b
+* Installation of Parallel Computing Toolbox
+
+
+
 ## devicespec.m
 Calculates specification for the machine being used to run the anlysis and implements paralell pool environment.
 
@@ -33,6 +51,13 @@ Current hyperparamters being explore are:
  
 ## RF_PredImp_3_2018_10_10.m
 Performs k-fold CV using RF analysis to calculate predictor importance for all included variables. Predictor importance is calculated for each k-fold sample and then average values are calulated for each predictor. Average values are then displayed in a bar chart. 
+
+
+## Authors
+Kevin Ryan
+
+## License
+This project is licensed under the MIT License - see the LICENSE.md file for details
   
 
 
