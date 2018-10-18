@@ -63,8 +63,8 @@ heart.thal = categorical(heart.thal);
 heart.target = categorical(heart.target);
 
 % Generate male and female tables
-heart_female = heart(heart.sex == 0,:);
-heart_male = heart(heart.sex == 1,:);
+heart_female = heart(heart.sex == '0',:);
+heart_male = heart(heart.sex == '1',:);
 %% Clear temporary variables
 clearvars filename delimiter startRow formatSpec fileID dataArray ans;
 

@@ -1,4 +1,4 @@
-[In, Out] = loadheart('/Users/kevinryan/Documents/DataScienceMSc/MachineLearning/Coursework/heart.csv'); % see script file loadhear.m
+[In, Infemale, Inmale, Out, Outfemale, Outmale] = loadheart('/Users/kevinryan/Documents/DataScienceMSc/MachineLearning/Coursework/heart.csv'); % see script file loadhear.m
 
 par = devicespec(); % see script file devicespec.m
 
