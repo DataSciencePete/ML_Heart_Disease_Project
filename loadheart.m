@@ -52,15 +52,22 @@ fclose(fileID);
 
 %% Create output variable
 heart = table(dataArray{1:end-1}, 'VariableNames', {'age','sex','cp','trestbps','chol','fbs','restecg','thalach','exang','oldpeak','slope','ca','thal','target'});
+
+% Convert chol column from continuous to boolean categorical variable
+% heart = addvars(heart,int8(heart.chol >= 260),'Before','chol', 'NewVariableNames', 'chol_high_low');
 % Convert appropriate columns to categorical
 heart.sex = categorical(heart.sex);
 heart.cp = categorical(heart.cp);
+% heart.chol_high_low = categorical(heart.chol_high_low);
 heart.fbs = categorical(heart.fbs);
 heart.restecg = categorical(heart.restecg);
 heart.exang = categorical(heart.exang);
 heart.slope = categorical(heart.slope);
 heart.thal = categorical(heart.thal);
 heart.target = categorical(heart.target);
+
+% heart = removevars(heart,{'chol'});
+% heart = removevars(heart,{'ca'});
 
 % Generate male and female tables
 heart_female = heart(heart.sex == '0',:);
