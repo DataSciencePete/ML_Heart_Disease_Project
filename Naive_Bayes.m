@@ -1,6 +1,6 @@
-[X, y] = load_heart_csv('heart.csv','numeric','array');
+[X, y,X_header] = load_heart_csv('heart.csv','numeric','array');
 
-%%
+
 
 %Set up Cross validation
 %tic % time how long it takes process to run
@@ -34,42 +34,74 @@ confusionF = @(XTRAIN,YTRAIN,XTEST,YTEST)(confusionmat(YTEST,predict(fitcnb(XTRA
 %confusionchart(cfMat, {'Healthy'; 'Heart_Disease'})
 
 %toc
-%%
+
+%{
+%Create set of values for distributions to do gridsearch over
+dists_cat = char('mn');
+dists_cont = char('gaussian','kernel');
+
+%Create an ndimensional grid to store all combinations of distribution
+[d_age, d_sex, d_cp, d_trestbps, d_chol, d_fbs, d_restecg, d_thalach, d_exang, d_oldpeak, d_slope, d_ca, d_thal] = ...
+    ndgrid(dists_cont,dists_cat,dists_cat,dists_cont,dists_cont,dists_cat,dists_cat,dists_cont,dists_cat,...
+    dists_cont,dists_cat,dists_cat,dists_cat);
+%}
+
+
+
+%{
 
 %Create set of values for distributions to do gridsearch over
-dists_cat = {'mn'};
-dists_cont = {'gaussian','kernel'};
+dists_cat = 1;
+dists_cont = [2,3];
+
 
 %Create an ndimensional grid to store all combinations of distribution
 [d_age, d_sex, d_cp, d_trestbps, d_chol, d_fbs, d_restecg, d_thalach, d_exang, d_oldpeak, d_slope, d_ca, d_thal] = ...
     ndgrid(dists_cont,dists_cat,dists_cat,dists_cont,dists_cont,dists_cat,dists_cat,dists_cont,dists_cat,...
     dists_cont,dists_cat,dists_cat,dists_cat);
 
-%%
 
 %Still need to figure out how to pass each set of arguments to fitncb
 %Probably convert dists_cat and dists_cont to an array for ease
 %Possibly ndimensionalgrid is not quite the right approach
 
 
-results = arrayfun(@(varargin) fitcnb(X,y,'CVPartition',cp,'DistributionNames',get_char_args(varargin)),d_age, d_sex, d_cp, d_trestbps, d_chol,...
-    d_fbs, d_restecg, d_thalach, d_exang, d_oldpeak, d_slope, d_ca, d_thal,'UniformOutput',false);
-    
+%results = arrayfun(@(varargin) fitcnb(X,y,'CVPartition',cp,'DistributionNames',args),d_age, d_sex, d_cp, d_trestbps, d_chol,...
+%    d_fbs, d_restecg, d_thalach, d_exang, d_oldpeak, d_slope, d_ca, d_thal,'UniformOutput',false);
 
-function char_args = get_char_args(varargin)
-fprintf('%d',nargin)
-celldisp(varargin)
-char_cell = {};    
-for K = 1: nargin
-    char_cell{K} = fprintf('%s',inputname(K));
+
+results = arrayfun(@(d_age, d_sex, d_cp, d_trestbps, d_chol,d_fbs, d_restecg, ...
+    d_thalach, d_exang, d_oldpeak, d_slope, d_ca, d_thal) fitcnb(X,y,'CVPartition',cp,...
+    'DistributionNames',get_char_args(d_age,d_sex, d_cp, d_trestbps, d_chol, d_fbs, ...
+    d_restecg, d_thalach, d_exang, d_oldpeak,...
+    d_slope, d_ca, d_thal)),d_age, d_sex, d_cp, d_trestbps, d_chol, d_fbs, ...
+    d_restecg, d_thalach, d_exang, d_oldpeak, d_slope, d_ca, d_thal,'UniformOutput',false);
+
+
+%foo = get_char_args(2,1,1,2,2,1,1,2,1,2,1,1,1);
+
+%}
+
+%specify optimisation over the distribution and kernel width
+%hpOO = struct('CVPartition',cp,'Verbose',2);
+hpOO = struct('CVPartition',cp,'Verbose',2,'Optimizer','gridsearch');
+categorical_fields = {'sex','cp','fbs','restecg','exang','slope','ca','thal'};
+
+%CVNBMdl = fitcnb(X,y,'CVPartition',cp,'OptimizeHyperparameters','auto','HyperparameterOptimizationOptions',hpOO);
+%CVNBMdl = fitcnb(X,y,'CVPartition',cp,'OptimizeHyperparameters',{'DistributionNames','Width'});
+CVNBMdl = fitcnb(X,y,'OptimizeHyperparameters','auto','HyperparameterOptimizationOptions',hpOO,...
+    'PredictorNames',X_header,'CategoricalPredictors',categorical_fields);
+
+%'DistributionNames',{'normal','kernel'}
+
+
+function char_args = get_char_args(d_age, d_sex, d_cp, d_trestbps, d_chol, d_fbs,d_restecg, d_thalach, d_exang, d_oldpeak, d_slope, d_ca, d_thal)
+    dists = {'mn','gaussian','kernel'};
+    cell_args = {dists{d_age}, dists{d_sex}, dists{d_cp}, dists{d_trestbps}, ...
+        dists{d_chol}, dists{d_fbs},dists{d_restecg}, dists{d_thalach}, ...
+        dists{d_exang}, dists{d_oldpeak}, dists{d_slope}, dists{d_ca}, dists{d_thal}};
+    char_args = cell_args;
 end
-celldisp(char_cell)
-char_args = char_cell;
-end
-
-
-%%
-
 
 
 %{

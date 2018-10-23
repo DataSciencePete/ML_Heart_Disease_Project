@@ -1,4 +1,4 @@
-function [features, labels, headers] = load_heart_csv(filepath,labelType,featureType)
+function [features, labels, X_header] = load_heart_csv(filepath,labelType,featureType)
 % Returns training and test data
 
 data = csvread(filepath,1,0);
@@ -13,6 +13,7 @@ fclose(fileID);
 
 %Remove any spaces from headers
 hdr = regexprep(hdr,'\W','');
+X_hdr = hdr(1:size(hdr,2)-1);
 
 %convert train_labels into binary encoded array if required
 if strcmp(labelType,'onehot')
@@ -25,7 +26,6 @@ end
 
 %Return feature value in table for random forest
 if strcmp(featureType,'table')
-    X_hdr = hdr(1:size(hdr,2)-1);
     feat = array2table(feat,'VariableNames',X_hdr);
 elseif strcmp(featureType,'array')
     feat = feat;
@@ -36,4 +36,4 @@ end
 %return values
 features = feat;
 labels = lab;
-headers = hdr;
+X_header = X_hdr;
