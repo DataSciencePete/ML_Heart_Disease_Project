@@ -1,4 +1,4 @@
-function [a,b,c,d,e,f] = loadheart(file)
+function [a,b,c,d,e,f,g] = loadheart(file)
 %% Import data from text file.
 % Script for importing data from the following text file:
 %
@@ -52,7 +52,7 @@ fclose(fileID);
 
 %% Create output variable
 heart = table(dataArray{1:end-1}, 'VariableNames', {'age','sex','cp','trestbps','chol','fbs','restecg','thalach','exang','oldpeak','slope','ca','thal','target'});
-
+heart_matrix = table2array(heart);
 % Convert chol column from continuous to boolean categorical variable
 % heart = addvars(heart,int8(heart.chol >= 260),'Before','chol', 'NewVariableNames', 'chol_high_low');
 % Convert appropriate columns to categorical
@@ -93,4 +93,5 @@ c = In_male;
 d = Out;
 e = Out_female;
 f = Out_male;
+g = heart_matrix;
 end
