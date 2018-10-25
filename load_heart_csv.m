@@ -1,5 +1,5 @@
 function [train_features, train_labels, test_features, test_labels, ...
-    X_header] = load_heart_csv(filepath,labelType,featureType)
+    X_header] = loa_heart_csv(filepath,labelType,featureType)
 % Returns training and test data
 
 data = csvread(filepath,1,0);
@@ -25,22 +25,23 @@ else
     error('Invalid label return type')
 end
 
+%Randomly permute the data to remove any effect of blocks
+p = randperm(size(feat,1));
+[trainInd, testInd] = divideblock(size(feat,1),0.8,0.2);
+train_features = feat(p(trainInd),:);
+test_features = feat(p(testInd),:);
+train_labels = lab(p(trainInd));
+test_labels = lab(p(trainInd));
+
 %Return feature value in table form
 if strcmp(featureType,'table')
-    feat = array2table(feat,'VariableNames',X_hdr);
+    train_features = array2table(train_features,'VariableNames',X_hdr);
+    test_features  = array2table(test_features ,'VariableNames',X_hdr);
 elseif strcmp(featureType,'array')
-    feat = feat;
+    %do nothing
 else
     error('Invalid feature type')
 end
 
-%Randomly permute the data to remove any effect of blocks
-p = randperm(size(feat,1));
-[trainInd, testInd] = divideblock(size(feat,1),0.8,0.2);
-
 %return values
-train_features = feat(p(trainInd));
-test_features = feat(p(testInd));
-train_labels = lab(p(trainInd));
-test_labels = lab(p(trainInd));
 X_header = X_hdr;
