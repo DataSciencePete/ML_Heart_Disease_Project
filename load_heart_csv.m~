@@ -34,13 +34,13 @@ else
     error('Invalid feature type')
 end
 
-%Randomly permute the data to remove any effect of blocks
 p = randperm(size(feat,1));
+
 [trainInd, testInd] = divideblock(size(feat,1),0.8,0.2);
 
+
+
 %return values
-train_features = feat(p(trainInd));
-test_features = feat(p(testInd));
-train_labels = lab(p(trainInd));
-test_labels = lab(p(trainInd));
+features = feat;
+labels = lab;
 X_header = X_hdr;
