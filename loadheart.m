@@ -1,4 +1,4 @@
-function [a,b] = loadheart(file)
+function [a,b,c,d,e,f,g] = loadheart(file)
 %% Import data from text file.
 % Script for importing data from the following text file:
 %
@@ -52,7 +52,26 @@ fclose(fileID);
 
 %% Create output variable
 heart = table(dataArray{1:end-1}, 'VariableNames', {'age','sex','cp','trestbps','chol','fbs','restecg','thalach','exang','oldpeak','slope','ca','thal','target'});
+heart_matrix = table2array(heart);
+% Convert chol column from continuous to boolean categorical variable
+% heart = addvars(heart,int8(heart.chol >= 260),'Before','chol', 'NewVariableNames', 'chol_high_low');
+% Convert appropriate columns to categorical
+heart.sex = categorical(heart.sex);
+heart.cp = categorical(heart.cp);
+% heart.chol_high_low = categorical(heart.chol_high_low);
+heart.fbs = categorical(heart.fbs);
+heart.restecg = categorical(heart.restecg);
+heart.exang = categorical(heart.exang);
+heart.slope = categorical(heart.slope);
+heart.thal = categorical(heart.thal);
+heart.target = categorical(heart.target);
 
+% heart = removevars(heart,{'chol'});
+% heart = removevars(heart,{'ca'});
+
+% Generate male and female tables
+heart_female = heart(heart.sex == '0',:);
+heart_male = heart(heart.sex == '1',:);
 %% Clear temporary variables
 clearvars filename delimiter startRow formatSpec fileID dataArray ans;
 
@@ -60,8 +79,19 @@ clearvars filename delimiter startRow formatSpec fileID dataArray ans;
 % Assign columns of table to input variables for Random Forest
 
 In = heart(:,1:end-1); % Input table of features
+In_female = heart_female(:,1:end-1);
+In_male = heart_male(:,1:end-1);
 Out = heart.target; % vector output of target values
+Out_female = heart_female.target;
+Out_male = heart_male.target;
+
+
 
 a = In;
-b =Out;
+b = In_female;
+c = In_male;
+d = Out;
+e = Out_female;
+f = Out_male;
+g = heart_matrix;
 end
