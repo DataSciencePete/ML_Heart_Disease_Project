@@ -1,5 +1,10 @@
 function [train_features, train_labels, test_features, test_labels, ...
-    X_header] = loa_heart_csv(filepath,labelType,featureType)
+    X_header] = load_heart_csv(filepath,labelType,featureType, rng_seed)
+
+%set rng seed number to ensure predictive split is obtained
+%This ensures that both algorithms will use the same train test data 
+% call function like [train_features, train_labels, test_features, test_labels, X_header] = load_heart_csv('/Users/kevinryan/Documents/DataScienceMSc/MachineLearning/Coursework/heart.csv', 'numeric', 'table', 22); % see script file loadhear.m
+rng(rng_seed);
 % Returns training and test data
 
 data = csvread(filepath,1,0);
