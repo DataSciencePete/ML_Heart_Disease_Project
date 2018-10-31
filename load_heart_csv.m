@@ -1,6 +1,9 @@
 function [train_features, train_labels, test_features, test_labels, ...
-    X_header] = loa_heart_csv(filepath,labelType,featureType)
+    X_header, cvp] = load_heart_csv(filepath,labelType,featureType)
 % Returns training and test data
+
+%Fix the random seed to ensure the same data and cvpartition is returned
+rng(1)
 
 data = csvread(filepath,1,0);
 lab = data(:,size(data,2));
@@ -39,9 +42,14 @@ if strcmp(featureType,'table')
     test_features  = array2table(test_features ,'VariableNames',X_hdr);
 elseif strcmp(featureType,'array')
     %do nothing
+elseif strcmp(featureType,'array_std')
+    %standardise the array before returning
+    
 else
     error('Invalid feature type')
 end
 
 %return values
+cvp = cvpartition(train_labels,'KFold',10); % Create CV for data. Each fold has 
+%roughly equal size and roughly the same class proportions as in GROUP
 X_header = X_hdr;
