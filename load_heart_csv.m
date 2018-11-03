@@ -42,6 +42,9 @@ if strcmp(featureType,'table')
     test_features  = array2table(test_features ,'VariableNames',X_hdr);
 elseif strcmp(featureType,'array')
     %do nothing
+elseif strcmp(featureType,'array_std')
+    %standardise the array before returning
+    
 else
     error('Invalid feature type')
 end
