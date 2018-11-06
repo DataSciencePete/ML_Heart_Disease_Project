@@ -1,5 +1,5 @@
 
-[train_features, train_labels, test_features, test_labels, X_header, cp] = load_heart_csv('heart.csv','numeric','array');
+[train_features, train_labels, test_features, test_labels, X_header, cp] = load_heart_csv('heart.csv');
 
 %%
 
@@ -30,9 +30,14 @@ Naive_Bayes_man_gs(train_features,train_labels,X_header,cp)
 distributions = {'normal','mvmn','mvmn','kernel','normal','mvmn','mvmn','kernel','mvmn','normal','mvmn','mvmn','mvmn'};
 hpOO3 = struct('CVPartition',cp,'Verbose',2,'Optimizer','gridsearch');
 
+%%
+
+tic;
 CVNBMdl3 = fitcnb(train_features,train_labels,'DistributionNames',distributions, ...
     'OptimizeHyperparameters',{'Width'},'HyperparameterOptimizationOptions',hpOO3);
+toc;
 
+%%
 
 %Run final model on test data using the distributions and width identified
 %above
@@ -44,7 +49,7 @@ order = unique(train_labels); % Order of the group labels
 confusion_mat = confusionmat(test_labels,predict(CNBMdl_final,test_features),'Order', order);
 
 % Draw Confusion matrix                   
-%%confusionchart(confusion_mat, {'Healthy'; 'Heart_Disease'})
+confusionchart(confusion_mat, {'Healthy'; 'Heart_Disease'})
 
 %Calculate recall, precision and F1 score
 recall = confusion_mat(1)/(confusion_mat(1)+ confusion_mat(3));
