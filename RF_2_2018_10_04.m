@@ -65,7 +65,7 @@ numPTS = optimizableVariable('numPTS',[1,size(In_high_imp_variables,2)],'Type','
 maxNumTrees = 500;
 numTrees = optimizableVariable('numTrees',[1,maxNumTrees],'Type','integer'); % define max number of trees to define forest
 
-hyperparametersRF = [minLS; numTrees];
+hyperparametersRF = [minLS; numTrees; numPTS];
 
 % Also also consider tuning the number of trees in the ensemble
 
@@ -108,17 +108,53 @@ for i = [1:20]
     results_paralllel_er0_5_MCR = bayesopt(@(params)myCVlossfcn(params,In_high_imp_variables,train_labels,par,cvp),hyperparametersRF, 'MaxObjectiveEvaluations', 100, 'UseParallel',true, 'ExplorationRatio', 0.5, 'Verbose',1);
     results_minLS = results_paralllel_er0_5_MCR.XAtMinEstimatedObjective.minLS;
     results_numPTS = results_paralllel_er0_5_MCR.XAtMinEstimatedObjective.numPTS;
+    results_numTrees = results_paralllel_er0_5_MCR.XAtMinEstimatedObjective.numTrees;
     results_min_est_mcr = results_paralllel_er0_5_MCR.MinEstimatedObjective;
     results_total_train_time = results_paralllel_er0_5_MCR.TotalElapsedTime;
-    summary_table = [summary_table; results_minLS results_numPTS results_min_est_mcr results_total_train_time];
+    summary_table = [summary_table; results_minLS results_numPTS results_numTrees results_min_est_mcr results_total_train_time];
 
 
 end
 
 mean_minLS = mean(summary_table(:,1));
 mean_numPTS = mean(summary_table(:,2));
-mean_min_est_mcr = mean(summary_table(:,3));
-mean_total_train_time = mean(summary_table(:,4));
+mean_numTrees = mean(summary_table(:,3));
+mean_min_est_mcr = mean(summary_table(:,4));
+mean_total_train_time = mean(summary_table(:,5));
+
+%{
+Mean values when training alogorithm on minLS, numPTS and numTrees simultaneously 
+mean_minLS
+
+mean_minLS =
+
+   28.6500
+
+mean_numPTS
+
+mean_numPTS =
+
+    1.4000
+
+mean_numTrees
+
+mean_numTrees =
+
+  108.8000
+
+mean_min_est_mcr
+
+mean_min_est_mcr =
+
+    0.1784
+
+mean_total_train_time
+
+mean_total_train_time =
+
+  172.3040
+  
+%}
 
 
 % Run bayesopt 20 times and calculate the mean hyperparamter values for RF
@@ -143,14 +179,15 @@ mean_minLS_2 = mean(summary_table_numTrees_minLS(:,1));
 mean_numTrees = mean(summary_table_numTrees_minLS(:,2));
 mean_min_est_mcr_2 = mean(summary_table_numTrees_minLS(:,3));
 mean_total_train_time_2 = mean(summary_table_numTrees_minLS(:,4));
-%% 
+%% Train model using optimal hyperparamater settings learned from Bayesian Optimisation steps on all the training data
+
 rng(1);
 % As defined by mean estimated model as defined from 20 x Bayesian
 % Optimisation runs
 
-final_numPTS = round(mean_numPTS);
-final_minLS = round(mean_minLS);
-final_numTrees = round(mean_numTrees);
+final_numPTS = round(mean_numPTS); % 1
+final_minLS = round(mean_minLS); % 27
+final_numTrees = round(mean_numTrees); % 139
 % Generate final trained model from training data
 final_mdl = TreeBagger(final_numTrees,In_high_imp_variables, train_labels,...
                         'method','classification',...
@@ -158,6 +195,12 @@ final_mdl = TreeBagger(final_numTrees,In_high_imp_variables, train_labels,...
                         'Options',par,...
                         'MinLeafSize',final_minLS,...
                         'NumPredictorsToSample', final_numPTS);
+final_mdl = TreeBagger(500,In_high_imp_variables, train_labels,...
+                        'method','classification',...
+                        'OOBPrediction','on',...
+                        'Options',par,...
+                        'MinLeafSize',27,...
+                        'NumPredictorsToSample', 1);
                     
 % Calculate Confusion matrix
 confusion_mat = confusionmat(test_labels,...
@@ -196,6 +239,11 @@ plot(fpr,tpr)
 xlabel('False Positive Rate')
 ylabel('True Positive Rate')
 
+% %Plot OOB classification error for model as the number of trees increase
+% figure
+% plot(oobError(final_mdl))
+% xlabel('Number of Grown Trees')
+% ylabel('Out-of-Bag Classification Error')
 %% Section 4 Grid Search Random Forest approach
 
 minLS_grid = linspace(1,20,20);  % Min No of observations per leaf (paramter search space)
