@@ -1,31 +1,4 @@
 function loss = myCVlossfcn_ce(params,In,Out,opts,cvp)
-%  cvp.NumTestSets
-%  cvp.training(i)
-%  cvp.test(i)
-
-% A = @(XTRAIN,YTRAIN,XTEST,YTEST)(predict(TreeBagger(...
-%             params.numTrees,XTRAIN,YTRAIN,...
-%             'method','classification',...
-%             'OOBPrediction','on',...
-%             'Options',opts,...
-%             'MinLeafSize',params.minLS,...
-%             'NumPredictorsToSample', 1),...
-%                 XTEST...
-%                ));
-%            
-%  
-%  
-%  res = crossval(A,In,Out,'partition',cvp);
-% %  [~,prob] = res(1,2);
-% %  ce_list =[];   
-% % for i = size(Out)
-% %     prob_ind = grp2idx(Out(i));
-% %     ce_list = [ce_list, prob(i,prob_ind)];
-% % end
-% loss = mean(res);
-
-
-
                                
     function cross_ent = ce_funct(XTRAIN,YTRAIN,XTEST,YTEST)
             [~, prob] = predict(TreeBagger(...
@@ -36,50 +9,27 @@ function loss = myCVlossfcn_ce(params,In,Out,opts,cvp)
                                 'MinLeafSize',params.minLS,...
                                 'NumPredictorsToSample', 1),...
                                     XTEST...
-                                   );         
-             cross_ent = prob(1);                  
+                                   ); 
+         % Calculate CE for each k-fold partition
+         kfold_ce = [];
+         for row = 1:size(YTEST,1) 
+             size(YTEST,1)
+             YTEST(row)
+             prob(:,(double(YTEST(row))))
+             prob(row,(double(YTEST(row))))
+             ce = log(prob(row,(double(YTEST(row)))));
+             % Generate a vector of ce values for each k-fold
+             kfold_ce = [kfold_ce ce];
+%              cross_ent =  size(prob(1,:,:));
+         end 
+         % Calculate average ce for each k-fold test set
+         cross_ent = -sum(kfold_ce);
              
     end
-A = @ce_funct;  
-test_1indices = find(cvp.test(1))
 
-loss = crossval(A,In,Out,'partition',cvp);
-% ce_list =[];   
-% for i = size(Out)
-%     prob_ind = grp2idx(Out(i));
-%     ce_list = [ce_list, prob_list(i,prob_ind)];
-% end
-% loss = mean(ce_list);
-
-
-% order = categorical([0; 1]);
-% function cross_ent = ce_funct(XTRAIN,YTRAIN,XTEST,YTEST)
-% cfmat = confusionmat(YTEST,...
-%                categorical(...
-%                cellfun(@str2num,... % convert cell array of character vectors to a cell array of numerics
-%                predict(...
-%                 TreeBagger(...
-%                     params.numTrees,XTRAIN,YTRAIN,...
-%                     'method','classification',...
-%                     'OOBPrediction','on',...
-%                     'Options',opts,...
-%                     'MinLeafSize',params.minLS,...
-%                     'NumPredictorsToSample', 1),...
-%                         XTEST...
-%                        ))),...
-%                'order', order...
-%               );
-%           
-% cross_ent = cfmat;
-% end
-% A = @ce_funct;                                      
-% cfMat = crossval(A,In,Out,'partition',cvp);
-% cfMat = reshape(sum(cfMat),2,2); % summation of the 10 confusion matrices over the 10CV data sets
-% %Calculate recall, precision and F1
-% recall = cfMat(1)/(cfMat(1)+ cfMat(3));
-% precision = cfMat(1)/(cfMat(1) + cfMat(2));
-% F1 = 2*(precision * recall)/(precision + recall);
-% loss = 1 - F1;
+% Acquire the matrix of probabilities for each k-fold test
+av_k_fold_ce = crossval(@ce_funct,In,Out,'partition',cvp);
+loss = mean(av_k_fold_ce);
 end
 
 
