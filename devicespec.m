@@ -15,7 +15,7 @@ else
 end
 
 % Find number of cores
-feature('numcores')
+feature('numcores');
 ncores=feature('numCores');
 disp([num2str(ncores) ' cores found'])
 
