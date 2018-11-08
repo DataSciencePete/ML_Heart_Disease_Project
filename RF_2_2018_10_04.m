@@ -5,7 +5,7 @@ par = devicespec(); % see script file devicespec.m
 
 %% Section 1
 % Set up Cross validation using Random Forest see https://uk.mathworks.com/help/stats/treebagger.html for hyperparameter settings and https://uk.mathworks.com/matlabcentral/answers/34771-classifier for code
-tic % time how long it takes process to run     
+tic % time how long it takes process to run 
 
 %data partition
 cp = cvpartition(train_labels,'KFold',10); % Create 10-folds cross-validation partition for data. Each subsample has roughly equal size and roughly the same class proportions as in GROUP 
@@ -65,7 +65,7 @@ numPTS = optimizableVariable('numPTS',[1,size(In_high_imp_variables,2)],'Type','
 maxNumTrees = 500;
 numTrees = optimizableVariable('numTrees',[1,maxNumTrees],'Type','integer'); % define max number of trees to define forest
 
-hyperparametersRF = [minLS; numTrees; numPTS];
+hyperparametersRF = [minLS; numPTS; numTrees];
 
 % Also also consider tuning the number of trees in the ensemble
 
@@ -117,10 +117,15 @@ for i = [1:20]
 end
 
 mean_minLS = mean(summary_table(:,1));
+variance_minLS = var(summary_table(:,1));
 mean_numPTS = mean(summary_table(:,2));
+variance_numPTS = var(summary_table(:,2));
 mean_numTrees = mean(summary_table(:,3));
+variance_numTrees = var(summary_table(:,3));
 mean_min_est_mcr = mean(summary_table(:,4));
+variance_min_est_mcr = var(summary_table(:,4));
 mean_total_train_time = mean(summary_table(:,5));
+variance_total_train_time = var(summary_table(:,5));
 
 %{
 Mean values when training alogorithm on minLS, numPTS and numTrees simultaneously 
