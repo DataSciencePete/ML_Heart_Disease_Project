@@ -38,7 +38,8 @@ end
 
 if strcmp(labelType,'categorical')
     train_labels = categorical(train_labels);
-elseif strcmp(labelType,'array')
+    test_labels = categorical(test_labels);
+elseif strcmp(labelType,'numeric')
     %do nothing    
 else
     error('Invalid feature type')
