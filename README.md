@@ -2,12 +2,16 @@
 
 ## Contents
 1. [Prerequisites](#prerequisites)
-2. [devicespec.m](#devicespecm)
-3. [loadheart.m](#loadheartm)
-4. [RF_2_2018_10_04.m](#rf_2_2018_10_04m)
-5. [RF_PredImp_3_2018_10_10.m](#rf_predimp_3_2018_10_10m)
-6. [Authors](#authors)
-7. [License](#license)
+2. [Model_Comparison.m](#model_comparisonm)
+3. [RF_2_2018_10_04.m](#rf_2_2018_10_04m)
+4. [RF_PredImp_3_2018_10_10.m](#rf_predimp_3_2018_10_10m)
+5. [Run_NB_Analysis.m](#run_nb_analysism)
+6. [Naive_Bayes_Optimisation.m](#naive_bayes_optimisationm)
+7. [Naive_Bayes_man_gs.m](#naive_bayes_man_gsm)
+8. [devicespec.m](#devicespecm)
+9. [load_heart_csv.m](#load_heart_csvm)
+10. [Authors](#authors)
+11. [License](#license)
 
 ## Prerequisites
 * Matlab version 2018a
@@ -16,7 +20,7 @@ The following can be used but are skipped if not present:
 * Parallel Computing Toolbox (required to optimise Random Forest computations for device)
 * Deep learning toolbox (required to plot confusion charts)
 
-##Model_Comparison.m
+## Model_Comparison.m
 Compares the Random Forest model to the Naive Bayes model using the optimal parameters identified by running the `Run_NB_Analysis.m` and `xxx.m` scripts. The optimal parameters are hard-coded for ease.
 
 ## RF_2_2018_10_04.m
