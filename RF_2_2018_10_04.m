@@ -90,7 +90,7 @@ results_paralllel = bayesopt(@(params)myCVlossfcn(params,In_high_imp_variables,t
 
 results_paralllel_er0 = bayesopt(@(params)myCVlossfcn(params,In_high_imp_variables,train_labels,par,cvp),hyperparametersRF, 'MaxObjectiveEvaluations', 30, 'UseParallel',true, 'ExplorationRatio', 0, 'Verbose',1);
 results_paralllel_er0_25 = bayesopt(@(params)myCVlossfcn(params,In_high_imp_variables,train_labels,par,cvp),hyperparametersRF, 'MaxObjectiveEvaluations', 30, 'UseParallel',true, 'ExplorationRatio', 0.25, 'Verbose',1);
-results_paralllel_er0_5_MCR = bayesopt(@(params)myCVlossfcn(params,In_high_imp_variables,train_labels,par,cvp),hyperparametersRF, 'MaxObjectiveEvaluations', 100, 'UseParallel',true, 'ExplorationRatio', 0.5, 'Verbose',1);
+results_paralllel_er0_5_MCR = bayesopt(@(params)myCVlossfcn(params,In_high_imp_variables,train_labels,par,cvp),hyperparametersRF, 'MaxObjectiveEvaluations', 30, 'UseParallel',true, 'ExplorationRatio', 0.5, 'Verbose',1);
 results_paralllel_er0_75 = bayesopt(@(params)myCVlossfcn(params,In_high_imp_variables,train_labels,par,cvp),hyperparametersRF, 'MaxObjectiveEvaluations', 30, 'UseParallel',true, 'ExplorationRatio', 0.75, 'Verbose',1);
 results_paralllel_er1= bayesopt(@(params)myCVlossfcn(params,In_high_imp_variables,train_labels,par,cvp),hyperparametersRF, 'MaxObjectiveEvaluations', 30, 'UseParallel',true, 'ExplorationRatio', 1, 'Verbose',1);
 
@@ -105,7 +105,7 @@ for i = [1:20]
     % Rerun bayesian optimisation 20 times to generate a set of values from
     % which an average hyperparameter setting can be gleaned (numTrees set
     % at 100 
-    results_paralllel_er0_5_MCR = bayesopt(@(params)myCVlossfcn(params,In_high_imp_variables,train_labels,par,cvp),hyperparametersRF, 'MaxObjectiveEvaluations', 100, 'UseParallel',true, 'ExplorationRatio', 0.5, 'Verbose',1);
+    results_paralllel_er0_5_MCR = bayesopt(@(params)myCVlossfcn(params,In_high_imp_variables,train_labels,par,cvp),hyperparametersRF, 'MaxObjectiveEvaluations', 50, 'UseParallel',true, 'ExplorationRatio', 0.5, 'Verbose',1);
     results_minLS = results_paralllel_er0_5_MCR.XAtMinEstimatedObjective.minLS;
     results_numPTS = results_paralllel_er0_5_MCR.XAtMinEstimatedObjective.numPTS;
     results_numTrees = results_paralllel_er0_5_MCR.XAtMinEstimatedObjective.numTrees;
@@ -184,6 +184,15 @@ mean_minLS_2 = mean(summary_table_numTrees_minLS(:,1));
 mean_numTrees = mean(summary_table_numTrees_minLS(:,2));
 mean_min_est_mcr_2 = mean(summary_table_numTrees_minLS(:,3));
 mean_total_train_time_2 = mean(summary_table_numTrees_minLS(:,4));
+
+% Time how long it takes to perform 30 Random Forest iterations with Bayesian Optimisation. 
+% This will be used as a comparison against the time taken to perform  30
+% NB iterations with Bayesian Optimisation
+tic;
+
+results_paralllel_er0_5_MCR = bayesopt(@(params)myCVlossfcn(params,In_high_imp_variables,train_labels,par,cvp),hyperparametersRF, 'MaxObjectiveEvaluations', 30, 'UseParallel',true, 'ExplorationRatio', 0.5, 'Verbose',1);
+
+RF_hyperparameter_search_time = toc;
 %% Train model using optimal hyperparamater settings learned from Bayesian Optimisation steps on all the training data
 
 rng(1);
@@ -200,12 +209,7 @@ final_mdl = TreeBagger(final_numTrees,In_high_imp_variables, train_labels,...
                         'Options',par,...
                         'MinLeafSize',final_minLS,...
                         'NumPredictorsToSample', final_numPTS);
-final_mdl = TreeBagger(500,In_high_imp_variables, train_labels,...
-                        'method','classification',...
-                        'OOBPrediction','on',...
-                        'Options',par,...
-                        'MinLeafSize',27,...
-                        'NumPredictorsToSample', 1);
+
                     
 % Calculate Confusion matrix
 confusion_mat = confusionmat(test_labels,...
@@ -269,3 +273,4 @@ result_grid = arrayfun(@(l,p)myCVlossfcn_grid(l,p,train_features,train_labels,pa
 % 
 % checkpredict = cellfun(@str2num, checkpredict);
 % confusionmat(train_labels, checkpredict)
+
