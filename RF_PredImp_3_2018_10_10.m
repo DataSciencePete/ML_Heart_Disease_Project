@@ -1,5 +1,5 @@
-[In, Infemale, Inmale, Out, Outfemale, Outmale, heart_matrix] = loadheart('/Users/kevinryan/Documents/DataScienceMSc/MachineLearning/Coursework/heart.csv'); % see script file loadhear.m
-
+% [In, Infemale, Inmale, Out, Outfemale, Outmale, heart_matrix] = loadheart('/Users/kevinryan/Documents/DataScienceMSc/MachineLearning/Coursework/heart.csv'); % see script file loadhear.m
+[train_features, train_labels, test_features, test_labels, X_header, cvp] = loadheart('/Users/kevinryan/Documents/DataScienceMSc/MachineLearning/Coursework/heart.csv');
 par = devicespec(); % see script file devicespec.m
 
 %data partition
