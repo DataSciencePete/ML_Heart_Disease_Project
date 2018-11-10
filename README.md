@@ -36,16 +36,16 @@ Current hyperparamters being explore are:
 4. Section 4
  Performs hyperparameter grid search looking at hyperparameters MinLeafSize and NumPredictorsToSample. Uses `myCVlossfcn_grid.m` function script to generate mcr values.
  
-##RF_PredImp_3_2018_10_10.m
+## RF_PredImp_3_2018_10_10.m
 Performs k-fold CV using RF analysis to calculate predictor importance for all included variables. Predictor importance is calculated for each k-fold sample and then average values are calulated for each predictor. Average values are then displayed in a bar chart. 
 
-##Run_NB_Analysis.m
+## Run_NB_Analysis.m
 This is the top-level script running experiments on the Naive Bayes model. The script runs Bayesian optimisation and a grid search testing normal and kernel distributions and optimising kernel width on all features. A manual grid search is also run where all combinations of distribution were tried on continuous features. The data is standardised and the same process is re-run. The `Naive_Bayes_Optimisation.m` and `Naive_Bayes_man_gs.m` functions are called to run the optimisations.
 
-##Naive_Bayes_Optimisation.m
+## Naive_Bayes_Optimisation.m
 Function to run Bayesian Optimisation and grid search given some features, labels and a cross validation partition. Prints the runtime for these optimisations to the terminal.
 
-##Naive_Bayes_man_gs.m
+## Naive_Bayes_man_gs.m
 Runs a manual grid search of all possible combinations of distribution over the set of features. Categorical features are fixed to the multivariable multinomial distribution `mvmm` and while kernel `kernel` and gaussian `normal` distributions are used for the continuous features.
 
 ## devicespec.m
