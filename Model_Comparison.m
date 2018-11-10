@@ -29,16 +29,13 @@ order = unique(train_labels); % Order of the group labels(for categorical column
 %Run final Random Forest Model
 In_high_imp_variables = removevars(train_features,{'age','trestbps','chol','fbs', 'restecg','exang','slope'});
 
-par = devicespec(); % see script file devicespec.m
-
-
 tic;
 RF_final_mdl = TreeBagger(109,In_high_imp_variables, train_labels,...
                         'method','classification',...
                         'OOBPrediction','on',...
-                        'Options',par,...
                         'MinLeafSize',29,...
                         'NumPredictorsToSample', 1);
+               
 RF_train_time = toc;
 
 RF_confusion_mat = confusionmat(test_labels,...
@@ -46,10 +43,7 @@ RF_confusion_mat = confusionmat(test_labels,...
             cellfun(@str2num,... % convert cell array of character vectors to a cell array of numerics
             predict(RF_final_mdl,test_features))),...
             'order', order);
-        
-        
-        
-
+       
 get_performance(RF_final_mdl,RF_confusion_mat, test_features, test_labels);
 
 fprintf('Random Forest train time %4.2fs\n',RF_train_time);
