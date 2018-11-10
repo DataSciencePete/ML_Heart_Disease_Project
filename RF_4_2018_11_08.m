@@ -1,6 +1,6 @@
 %% Load data into Matlab
-[train_features, train_labels, test_features, test_labels, X_header, cvp] = loadheart('/Users/kevinryan/Documents/DataScienceMSc/MachineLearning/Coursework/heart.csv'); % see script file loadhear.m
-% [train_features, train_labels, test_features, test_labels, X_header] = load_heart_csv('/Users/kevinryan/Documents/DataScienceMSc/MachineLearning/Coursework/heart.csv', 'numeric', 'table'); % see script file loadhear.m
+% [train_features, train_labels, test_features, test_labels, X_header, cvp] = loadheart('/Users/kevinryan/Documents/DataScienceMSc/MachineLearning/Coursework/heart.csv'); % see script file loadhear.m
+[train_features, train_labels, test_features, test_labels, X_header,cvp] = load_heart_csv('/Users/kevinryan/Documents/DataScienceMSc/MachineLearning/Coursework/heart.csv', 'table', 'categorical'); % see script file loadhear.m
 par = devicespec(); % see script file devicespec.m
 
 
@@ -57,6 +57,15 @@ mean_total_train_time_MCR = mean(summary_table_MCR(:,5));
 variance_total_train_time_MCR = var(summary_table_MCR(:,5));
 
 
+% Time how long it takes to perform 30 Random Forest iterations with Bayesian Optimisation. 
+% This will be used as a comparison against the time taken to perform  30
+% NB iterations with Bayesian Optimisation
+tic;
+
+results_paralllel_er0_5_MCR = bayesopt(@(params)myCVlossfcn(params,In_high_imp_variables,train_labels,par,cvp),hyperparametersRF, 'MaxObjectiveEvaluations', 30, 'UseParallel',true, 'ExplorationRatio', 0.5, 'Verbose',1);
+
+RF_hyperparameter_search_time = toc;
+
 %% Run Bayesian Optimisation using ce as error value to evaluate objective 20 times and calculate mean and variance values for each hyperparameter
 
 % Run bayesopt using ce as error value to evaluate objective function 20 times and calculate the mean hyperparamter values for RF
@@ -81,7 +90,7 @@ variance_minLS_CE = var(summary_table_CE(:,1));
 mean_numPTS_CE = mean(summary_table_CE(:,2));
 variance_numPTS_CE = var(summary_table_CE(:,2));
 mean_numTrees_CE = mean(summary_table_CE(:,3));
-variance_numTrees_CE = var(summary_table_MCR(:,3));
+variance_numTrees_CE = var(summary_table_CE(:,3));
 mean_min_estce_CE = mean(summary_table_CE(:,4));
 variance_min_estce_CE = var(summary_table_CE(:,4));
 mean_total_train_time_CE = mean(summary_table_CE(:,5));
