@@ -33,9 +33,6 @@ order = unique(train_labels); % Order of the group labels(for categorical column
 %Run final Random Forest Model
 In_high_imp_variables = removevars(train_features,{'age','trestbps','chol','fbs', 'restecg','exang','slope'});
 
-par = devicespec(); % see script file devicespec.m
-
-
 tic;
 RF_final_mdl = TreeBagger(151,In_high_imp_variables, train_labels,...
                         'method','classification',...

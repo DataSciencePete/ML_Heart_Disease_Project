@@ -18,18 +18,18 @@ categorical_fields = [false,true,true,false,false,true,true,false,true,...
 
 %Could change this to use a kfoldFun and pass a function to get the F1
 %score for example, but kfoldFun seems to raise an issue
+tic;
 results = arrayfun(@(d_age, d_sex, d_cp, d_trestbps, d_chol,d_fbs, d_restecg, ...
     d_thalach, d_exang, d_oldpeak, d_slope, d_ca, d_thal) kfoldLoss(fitcnb(X,y,'CVPartition',cp,...
     'CategoricalPredictors',categorical_fields,'DistributionNames',get_char_args(d_age,d_sex,...
     d_cp, d_trestbps, d_chol, d_fbs, d_restecg, d_thalach, d_exang, d_oldpeak,...
     d_slope, d_ca, d_thal,dists))),d_age, d_sex, d_cp, d_trestbps, d_chol, d_fbs, ...
     d_restecg, d_thalach, d_exang, d_oldpeak, d_slope, d_ca, d_thal,'UniformOutput',false);
-
-
+man_gs_runtime = toc;
+fprintf('Manual grid search run time %4.2f\n',man_gs_runtime);
 
 %Print out the results of grid search
 
-%fileID = fopen('gs_results.csv','w');
 fileID = 1;
 fprintf(fileID,'%s\n',strjoin(X_header,','));
 
