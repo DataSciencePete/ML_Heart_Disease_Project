@@ -1,4 +1,4 @@
-[In, Infemale, Inmale, Out, Outfemale, Outmale, heart_matrix] = loadheart('/Users/kevinryan/Documents/DataScienceMSc/MachineLearning/Coursework/heart.csv'); % see script file loadhear.m
+[train_features, train_labels, test_features, test_labels, heart_matrix, X_header, cvp] = loadheart('/Users/kevinryan/Documents/DataScienceMSc/MachineLearning/Coursework/heart.csv'); % see script file loadhear.m
 
 z = [1 4 5 8 10];
 titles = {'age - Age'; 'trestbp - Resting Blood Pressure'; 'chol - Serum Cholesterol mg/dl';...
@@ -131,9 +131,10 @@ counts = transpose([healthy_counts ; heart_disease_counts]);
 figure(5);
 bc = bar(counts, 'stacked');
 % Add x axis labels
-xvals = {'Absence - Exercise \newline induced angina'; 'Presence - Exercise \newline induced angina'};
+xvals = {'Absence'; 'Presence'};
 set(gca,'XtickLabel',xvals);
 
+xlabel('Exercise Induced Angina');
 legendvals = {'Healthy'; 'Heart Disease'};
 legend(bc, legendvals, 'Location', 'northwest');
 title('exang - Exercise induced angina', 'FontSize', 18);
@@ -178,9 +179,10 @@ counts = transpose([healthy_counts ; heart_disease_counts]);
 figure(7);
 bc = bar(counts, 'stacked');
 % Add x axis labels
-xvals = {'0 blocked \newline vessel(s)'; '1 blocked \newline vessel(s)'; '2 blocked \newline vessel(s)'; '3 blocked \newline vessel(s)'};
+xvals = {'0'; '1'; '2'; '3'};
 set(gca,'XtickLabel',xvals);
 
+xlabel('# of blocked vessels');
 legendvals = {'Healthy'; 'Heart Disease'};
 legend(bc, legendvals, 'Location', 'northwest');
 title('ca - Number of major vessels colored by fluoroscopy', 'FontSize', 18);
