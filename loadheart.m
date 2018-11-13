@@ -1,5 +1,5 @@
 function [train_features, train_labels, test_features, test_labels, ...
-    X_header, cvp] = loadheart(file)
+    heart_matrix, X_header, cvp] = loadheart(file)
 %% Import data from text file.
 % Script for importing data from the following text file:
 %

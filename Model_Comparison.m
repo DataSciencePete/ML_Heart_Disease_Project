@@ -1,5 +1,7 @@
 [train_features, train_labels, test_features, test_labels, X_header, cp] = load_heart_csv('heart.csv','array','numeric');
 
+rng(1);
+
 order = unique(train_labels); % Order of the group labels
 
 %Run final Naive Bayes Model
@@ -10,15 +12,17 @@ NB_final_mdl = fitcnb(train_features,train_labels,...
     'DistributionNames',distributions,'Width',36.337);
 NB_train_time = toc;
 
+tic;
 NB_confusion_mat = confusionmat(test_labels,...
             predict(NB_final_mdl,test_features)...
             ,'Order', order);
+NB_predict_test_time = toc;
 
 % Initialise figure plots
 figure;
 hold on;
 
-get_performance(NB_final_mdl,NB_confusion_mat, test_features, test_labels);
+[NB_recall_Test, NB_precision_Test, NB_F1_Test, NB_specificity_Test, NB_accuracy_Test, NB_AUC_Test] = get_performance(NB_final_mdl,NB_confusion_mat, test_features, test_labels);
 
 fprintf('Naive Bayes train time %4.2fs\n',NB_train_time);
 
@@ -30,29 +34,44 @@ order = unique(train_labels); % Order of the group labels(for categorical column
 In_high_imp_variables = removevars(train_features,{'age','trestbps','chol','fbs', 'restecg','exang','slope'});
 
 tic;
-RF_final_mdl = TreeBagger(109,In_high_imp_variables, train_labels,...
+RF_final_mdl = TreeBagger(44,In_high_imp_variables, train_labels,...
                         'method','classification',...
                         'OOBPrediction','on',...
-                        'MinLeafSize',29,...
+                        'MinLeafSize',6,...
                         'NumPredictorsToSample', 1);
-               
-RF_train_time = toc;
+RF_train_time = toc; % Time taken to train final RF model on all the training data
 
-RF_confusion_mat = confusionmat(test_labels,...
+% Confusion matrix on training data
+RF_confusion_mat_train = confusionmat(train_labels,...
+            categorical(...
+            cellfun(@str2num,... % convert cell array of character vectors to a cell array of numerics
+            predict(RF_final_mdl,train_features))),...
+            'order', order);
+% Confusion matrix on test data
+tic;
+RF_confusion_mat_test = confusionmat(test_labels,...
             categorical(...
             cellfun(@str2num,... % convert cell array of character vectors to a cell array of numerics
             predict(RF_final_mdl,test_features))),...
             'order', order);
-       
-get_performance(RF_final_mdl,RF_confusion_mat, test_features, test_labels);
-
+ 
+RF_predict_test_time = toc; % Time taken for optimised model to make test set predictions
+        
+% Get performance data for training data
+%[RF_recall_Train, RF_precision_Train, RF_F1_Train, RF_specificity_Train, RF_accuracy_Train, RF_AUC_Train] = get_performance(RF_final_mdl,RF_confusion_mat_train, train_features, train_labels);        
+% Get performance data for test data
+[RF_recall_Test, RF_precision_Test, RF_F1_Test, RF_specificity_Test, RF_accuracy_Test, RF_AUC_Test] = get_performance(RF_final_mdl,RF_confusion_mat_test, test_features, test_labels);
+ax = gca; % grab current axis
+ax.FontSize = 16 % Alter font size
+ax.FontWeight = 'bold';
 fprintf('Random Forest train time %4.2fs\n',RF_train_time);
   
 hold off;
 
 %Function to report model performance
-function get_performance(mdl,confusion_mat,test_features, test_labels)
+function [recall, precision, F1, specificity,accuracy, AUC] = get_performance(mdl,confusion_mat,test_features, test_labels)
 
+rng(1);
 recall = confusion_mat(1)/(confusion_mat(1)+ confusion_mat(3));
 precision = confusion_mat(1)/(confusion_mat(1) + confusion_mat(2));
 F1 = (2*(precision * recall))/(precision + recall);
@@ -76,11 +95,11 @@ fprintf('Accuracy %4.2f\n',accuracy);
 
 % Plot ROC curve
 
-plot(fpr,tpr)
+plot(fpr,tpr, 'LineWidth',2)
 
 xlabel('False Positive Rate')
 ylabel('True Positive Rate')
-
+lg = legend('Naive Bayes', 'Random Forest');
 
 end
 
