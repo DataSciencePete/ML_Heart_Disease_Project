@@ -22,7 +22,7 @@ NB_predict_test_time = toc;
 figure;
 hold on;
 
-get_performance(NB_final_mdl,NB_confusion_mat, test_features, test_labels);
+[NB_recall_Test, NB_precision_Test, NB_F1_Test, NB_specificity_Test, NB_accuracy_Test, NB_AUC_Test] = get_performance(NB_final_mdl,NB_confusion_mat, test_features, test_labels);
 
 fprintf('Naive Bayes train time %4.2fs\n',NB_train_time);
 
@@ -34,11 +34,11 @@ order = unique(train_labels); % Order of the group labels(for categorical column
 In_high_imp_variables = removevars(train_features,{'age','trestbps','chol','fbs', 'restecg','exang','slope'});
 
 tic;
-RF_final_mdl = TreeBagger(151,In_high_imp_variables, train_labels,...
+RF_final_mdl = TreeBagger(44,In_high_imp_variables, train_labels,...
                         'method','classification',...
                         'OOBPrediction','on',...
-                        'MinLeafSize',30,...
-                        'NumPredictorsToSample', 2);
+                        'MinLeafSize',6,...
+                        'NumPredictorsToSample', 1);
 RF_train_time = toc; % Time taken to train final RF model on all the training data
 
 % Confusion matrix on training data
@@ -58,10 +58,12 @@ RF_confusion_mat_test = confusionmat(test_labels,...
 RF_predict_test_time = toc; % Time taken for optimised model to make test set predictions
         
 % Get performance data for training data
-[RF_recall_Train, RF_precision_Train, RF_F1_Train, RF_specificity_Train, RF_accuracy_Train, RF_AUC_Train] = get_performance(RF_final_mdl,RF_confusion_mat_train, train_features, train_labels);        
+%[RF_recall_Train, RF_precision_Train, RF_F1_Train, RF_specificity_Train, RF_accuracy_Train, RF_AUC_Train] = get_performance(RF_final_mdl,RF_confusion_mat_train, train_features, train_labels);        
 % Get performance data for test data
 [RF_recall_Test, RF_precision_Test, RF_F1_Test, RF_specificity_Test, RF_accuracy_Test, RF_AUC_Test] = get_performance(RF_final_mdl,RF_confusion_mat_test, test_features, test_labels);
-
+ax = gca; % grab current axis
+ax.FontSize = 16 % Alter font size
+ax.FontWeight = 'bold';
 fprintf('Random Forest train time %4.2fs\n',RF_train_time);
   
 hold off;
@@ -93,11 +95,11 @@ fprintf('Accuracy %4.2f\n',accuracy);
 
 % Plot ROC curve
 
-plot(fpr,tpr)
+plot(fpr,tpr, 'LineWidth',2)
 
 xlabel('False Positive Rate')
 ylabel('True Positive Rate')
-
+lg = legend('Naive Bayes', 'Random Forest');
 
 end
 
