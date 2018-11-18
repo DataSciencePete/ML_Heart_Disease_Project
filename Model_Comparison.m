@@ -41,6 +41,8 @@ RF_final_mdl = TreeBagger(44,In_high_imp_variables, train_labels,...
                         'NumPredictorsToSample', 1);
 RF_train_time = toc; % Time taken to train final RF model on all the training data
 
+fprintf('Random Forest train time %4.2fs\n',RF_train_time);
+
 RF_confusion_mat = confusionmat(test_labels,...
             categorical(...
             cellfun(@str2num,... % convert cell array of character vectors to a cell array of numerics
@@ -54,7 +56,7 @@ RF_predict_test_time = toc; % Time taken for optimised model to make test set pr
 ax = gca; % grab current axis
 ax.FontSize = 16 % Alter font size
 ax.FontWeight = 'bold';
-fprintf('Random Forest train time %4.2fs\n',RF_train_time);
+lg = legend('Naive Bayes', 'Random Forest');
   
 hold off;
 
@@ -63,6 +65,7 @@ model_metrics = [NB_recall_Test, NB_precision_Test, NB_F1_Test, NB_specificity_T
     RF_recall_Test, RF_precision_Test, RF_F1_Test, RF_specificity_Test, RF_accuracy_Test, RF_AUC_Test];    
 
 % Draw bar chart comparing performance metrics on test data
+figure;
 bar_chart = barh(model_metrics');
 xlim([0.6,1]) % set y axis limits
 ax = gca; % grab handle to current axis
@@ -73,41 +76,5 @@ legendvals = {'RF'; 'NB'}; % Set legend names
 lg = legend([bar_chart(2), bar_chart(1)], legendvals, 'Location', 'southeast');
 ax.FontSize = 16 % Alter font size
 ax.FontWeight = 'bold';
-
-
-%Function to report model performance
-function [recall, precision, F1, specificity,accuracy, AUC] = get_performance(mdl,confusion_mat,test_features, test_labels)
-
-rng(1);
-recall = confusion_mat(1)/(confusion_mat(1)+ confusion_mat(3));
-precision = confusion_mat(1)/(confusion_mat(1) + confusion_mat(2));
-F1 = (2*(precision * recall))/(precision + recall);
-specificity = confusion_mat(4)/(confusion_mat(4) + confusion_mat(3));
-accuracy = (confusion_mat(1) + confusion_mat(4))/sum([confusion_mat(1),confusion_mat(2),confusion_mat(3),confusion_mat(4)]);
-
-fprintf('Recall %4.2f\n',recall);
-fprintf('Precision %4.2f\n',precision);
-fprintf('F1 %4.2f\n',F1);
-fprintf('Specificity %4.2f\n',specificity);
-fprintf('Accuracy %4.2f\n',accuracy);
-
-% Draw ROC curve
-[yhat,scores,cost] = predict(mdl,test_features);
-
-%need to find NB method to calculate class scores
-%should be able to use predict function
-
-% calc fpr and tpr at different threshold as defined by T for ROC curve
-[fpr,tpr, T, AUC] = perfcurve(test_labels,scores(:,2), 1);
-
-% Plot ROC curve
-
-plot(fpr,tpr, 'LineWidth',2)
-
-xlabel('False Positive Rate')
-ylabel('True Positive Rate')
-lg = legend('Naive Bayes', 'Random Forest');
-
-end
 
 
