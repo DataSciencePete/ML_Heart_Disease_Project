@@ -41,15 +41,7 @@ RF_final_mdl = TreeBagger(44,In_high_imp_variables, train_labels,...
                         'NumPredictorsToSample', 1);
 RF_train_time = toc; % Time taken to train final RF model on all the training data
 
-% Confusion matrix on training data
-RF_confusion_mat_train = confusionmat(train_labels,...
-            categorical(...
-            cellfun(@str2num,... % convert cell array of character vectors to a cell array of numerics
-            predict(RF_final_mdl,train_features))),...
-            'order', order);
-% Confusion matrix on test data
-tic;
-RF_confusion_mat_test = confusionmat(test_labels,...
+RF_confusion_mat = confusionmat(test_labels,...
             categorical(...
             cellfun(@str2num,... % convert cell array of character vectors to a cell array of numerics
             predict(RF_final_mdl,test_features))),...
@@ -57,16 +49,31 @@ RF_confusion_mat_test = confusionmat(test_labels,...
  
 RF_predict_test_time = toc; % Time taken for optimised model to make test set predictions
         
-% Get performance data for training data
-%[RF_recall_Train, RF_precision_Train, RF_F1_Train, RF_specificity_Train, RF_accuracy_Train, RF_AUC_Train] = get_performance(RF_final_mdl,RF_confusion_mat_train, train_features, train_labels);        
 % Get performance data for test data
-[RF_recall_Test, RF_precision_Test, RF_F1_Test, RF_specificity_Test, RF_accuracy_Test, RF_AUC_Test] = get_performance(RF_final_mdl,RF_confusion_mat_test, test_features, test_labels);
+[RF_recall_Test, RF_precision_Test, RF_F1_Test, RF_specificity_Test, RF_accuracy_Test, RF_AUC_Test] = get_performance(RF_final_mdl,RF_confusion_mat, test_features, test_labels);
 ax = gca; % grab current axis
 ax.FontSize = 16 % Alter font size
 ax.FontWeight = 'bold';
 fprintf('Random Forest train time %4.2fs\n',RF_train_time);
   
 hold off;
+
+
+model_metrics = [NB_recall_Test, NB_precision_Test, NB_F1_Test, NB_specificity_Test, NB_accuracy_Test, NB_AUC_Test;...
+    RF_recall_Test, RF_precision_Test, RF_F1_Test, RF_specificity_Test, RF_accuracy_Test, RF_AUC_Test];    
+
+% Draw bar chart comparing performance metrics on test data
+bar_chart = barh(model_metrics');
+xlim([0.6,1]) % set y axis limits
+ax = gca; % grab handle to current axis
+% Add labels to each x tick
+ax.YTickLabel = {'Recall', 'Precision', 'F1', 'Specificity', 'Accuracy', 'AUC'};
+legendvals = {'RF'; 'NB'}; % Set legend names
+% change order of legend entries
+lg = legend([bar_chart(2), bar_chart(1)], legendvals, 'Location', 'southeast');
+ax.FontSize = 16 % Alter font size
+ax.FontWeight = 'bold';
+
 
 %Function to report model performance
 function [recall, precision, F1, specificity,accuracy, AUC] = get_performance(mdl,confusion_mat,test_features, test_labels)
