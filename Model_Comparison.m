@@ -68,6 +68,11 @@ fprintf('Random Forest train time %4.2fs\n',RF_train_time);
   
 hold off;
 
+% Generate bar chart for performance metrics comparing NB vs RF
+
+[NB_recall_Test, NB_precision_Test, NB_F1_Test, NB_specificity_Test, NB_accuracy_Test, NB_AUC_Test;...
+    RF_recall_Test, RF_precision_Test, RF_F1_Test, RF_specificity_Test, RF_accuracy_Test RF_AUC_Test]
+
 %Function to report model performance
 function [recall, precision, F1, specificity,accuracy, AUC] = get_performance(mdl,confusion_mat,test_features, test_labels)
 
