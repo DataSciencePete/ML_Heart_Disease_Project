@@ -33,4 +33,6 @@ kernel_smoother_type = optimizableVariable('Kernel', {'normal', 'box', 'epanechn
 %Hyperparamter object
 hyperparametersRF = [dist; widthparam];
 
-results_paralllel_MCR = bayesopt(@(params)myCVlossfcn_nbce(params,train_features,train_labels,cvp),hyperparametersRF, 'MaxObjectiveEvaluations', 30, 'UseParallel',true, 'ExplorationRatio', 0.5, 'Verbose',1);
+results_paralllel_MCR = bayesopt(@(params)myCVlossfcn_nbce(params,train_features,train_labels,cvp),hyperparametersRF, 'MaxObjectiveEvaluations', 30, 'AcquisitionFunctionName', 'expected-improvement-plus','UseParallel',true, 'Verbose',2, 'AlwaysReportObjectiveErrors', true);
+
+best_point = bestPoint(results_paralllel_MCR);
