@@ -12,7 +12,14 @@ tic;
 CVNBMdl1 = fitcnb(X,y,'OptimizeHyperparameters','auto','HyperparameterOptimizationOptions',hpOO1,...
     'CategoricalPredictors',categorical_fields);
 bo_runtime = toc;
-fprintf('Bayesopt run time %4.2f\n',bo_runtime);
+fprintf('Bayesopt run using mcr as loss function time %4.2f\n',bo_runtime);
+
+tic;
+CVNBMdl1b = fitcnb_ce(X,y,'OptimizeHyperparameters','auto','HyperparameterOptimizationOptions',hpOO1,...
+    'CategoricalPredictors',categorical_fields);
+bo_runtime = toc;
+fprintf('Bayesopt run using cross entropy as loss function time %4.2f\n',bo_runtime);
+
 
 %Run grid search for comparison
 
