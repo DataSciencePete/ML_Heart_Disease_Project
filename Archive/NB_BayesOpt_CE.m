@@ -78,4 +78,3 @@ ax.FontWeight = 'bold';
 % add legend entries
 lg = legend('Cross Entropy', 'MCR');
 
-hold off;
