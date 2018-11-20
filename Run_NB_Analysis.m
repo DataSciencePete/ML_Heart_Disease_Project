@@ -49,7 +49,7 @@ tic;
 confusion_mat = confusionmat(test_labels,predict(CNBMdl_final,test_features),'Order', order);
 final_model_test_time = toc;
 
-% Draw Confusion matrix                   
+% Draw Confusion matrix
 if any(strcmp('Deep Learning Toolbox',{v.Name}))
     confusionchart(confusion_mat, {'Healthy'; 'Heart_Disease'})
 end
