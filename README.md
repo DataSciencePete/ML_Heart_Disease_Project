@@ -2,20 +2,21 @@
 
 ## Contents
 1. [Prerequisites](#prerequisites)
-2. [Model_Comparison.m](#model_comparisonm)
+2. [Model_Comparison.m](#Model_Comparison.m)
 3. [RF_2_2018_10_04.m](#rf_2_2018_10_04m)
 4. [RF_PredImp_3_2018_10_10.m](#rf_predimp_3_2018_10_10m)
-5. [Run_NB_Analysis.m](#run_nb_analysism)
-6. [Naive_Bayes_Optimisation.m](#naive_bayes_optimisationm)
-7. [Naive_Bayes_man_gs.m](#naive_bayes_man_gsm)
+5. [Run_NB_Analysis.m](#Run_NB_Analysis.m)
+6. [Naive_Bayes_Optimisation.m](#Naive_Bayes_Optimisation.m)
+7. [Naive_Bayes_man_gs.m](#Naive_Bayes_man_gs.m)
 8. [devicespec.m](#devicespecm)
-9. [load_heart_csv.m](#load_heart_csvm)
+9. [load_heart_csv.m](#load_heart_csv.m)
 10. [Authors](#authors)
 11. [License](#license)
 
 ## Prerequisites
 * Matlab version 2018a
 * Statistics toolbox
+
 The following can be used but are skipped if not present:
 * Parallel Computing Toolbox (required to optimise Random Forest computations for device)
 * Deep learning toolbox (required to plot confusion charts)

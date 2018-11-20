@@ -1,7 +1,4 @@
 function Naive_Bayes_optimisation(X,y,cp)
- 
-categorical_fields = [false,true,true,false,false,true,true,false,true,...
-    false,true,true,true];
 
 %Run Bayesian optimisation
 
