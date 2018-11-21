@@ -1,3 +1,4 @@
+addpath(genpath('../'));
 [train_features, train_labels, test_features, test_labels, X_header, cp] = load_heart_csv('heart.csv','array','numeric');
 
 %Run grid search and Naive Bayes, testing normal and kernel distributions
