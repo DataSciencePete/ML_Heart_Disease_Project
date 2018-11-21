@@ -11,7 +11,7 @@ IsTallData = istall(Predictors);
 % Parse and check args
 % verifyNoValidationArgs(varargin);
 [OptimizeHyperparametersArg, HyperparameterOptimizationOptions, FitFunctionArgs] = ...
-    classreg.learning.paramoptim.parseFitoptimizingArgs(varargin);
+    classreg.learning.paramoptim.parseFitoptimizingArgs(varargin, IsTallData);
 % Create optimization info and validation args
 BOInfo = classreg.learning.paramoptim.BayesoptInfo.makeBayesoptInfo(FitFunctionName, Predictors, Response, FitFunctionArgs);
 VariableDescriptions = getVariableDescriptions(BOInfo, OptimizeHyperparametersArg);
