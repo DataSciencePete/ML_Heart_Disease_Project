@@ -1,11 +1,25 @@
 %% Load data into Matlab
-% [train_features, train_labels, test_features, test_labels, X_header, cvp] = loadheart('/Users/kevinryan/Documents/DataScienceMSc/MachineLearning/Coursework/heart.csv'); % see script file loadhear.m
-[train_features, train_labels, test_features, test_labels, X_header,cvp] = load_heart_csv('/Users/kevinryan/Documents/DataScienceMSc/MachineLearning/Coursework/heart.csv', 'table', 'categorical'); % see script file loadhear.m
-par = devicespec(); % see script file devicespec.m
+% Add folders to the path
+addpath(genpath('../'));
+[train_features, train_labels, test_features, test_labels, X_header,cvp] = load_heart_csv('heart.csv', 'table', 'categorical');
 
 
-%% Section 2
+% Check dependencies for running devicespec.m
+[~, plist] = matlab.codetools.requiredFilesAndProducts('devicespec.m')
+
+% Requires installation of 'Parallel Computing Toolbox' and 'MATLAB
+% Distributed Computing Server' but if conditional allows you to skip use
+% of devicespec() if dependencies not installed. This will cause treebagger
+% to take longer to run
+if contains([plist.Name],'Parallel Computing Toolboox')
+    par = devicespec(); % see script file devicespec.m
+else
+    par = statset('UseParallel', false);
+end
+%% Generate Optimizable objects for Matlab Bayesian Optimisation implementation 'bayesopt'
 % Prepare hyperparamter object for optimisation using Bayesian Optimisation
+% Explore error terrain looking at the following Treebagger hyperparamters:
+% 'MinLeafSize', 'NumPredictorsToSample', 'NumTrees'
 
 % Min No of Observations per leaf
 maxMinLS = 50;
@@ -13,7 +27,8 @@ minLS = optimizableVariable('minLS',[1,maxMinLS],'Type','integer');
 
 
 % Remove predictor variables from table In which have a mean Predictor
-% Importance <0.4
+% Importance < 0.4 based on findings of preliminary Predictor Importance
+% study
 In_high_imp_variables = removevars(train_features,{'age','trestbps','chol','fbs', 'restecg','exang','slope'});
 
 % No of variables to consider at each split in the tree
@@ -23,13 +38,15 @@ numPTS = optimizableVariable('numPTS',[1,size(In_high_imp_variables,2)],'Type','
 maxNumTrees = 500;
 numTrees = optimizableVariable('numTrees',[1,maxNumTrees],'Type','integer'); % define max number of trees to define forest
 
-%Hyperparamter object
+% Hyperparamter object to be inputted into bayesopt function
 hyperparametersRF = [minLS; numPTS; numTrees];
 
 %% Run Bayesian Optimisation using mcr as error value to evaluate objective 20 times and calculate mean and variance values for each hyperparameter
 
-% Run bayesopt using mcr as error value to evaluate objective function 20 times and calculate the mean hyperparamter values for RF
+% Run bayesopt using mcr as error value to evaluate objective function 20
+% times and calculate the mean and variance  hyperparamter values for RF
 % Initialise summary table
+
 summary_table_MCR = [];
 for i = 1:5
     % Rerun bayesian optimisation 20 times to generate a set of values from
@@ -57,7 +74,7 @@ mean_total_train_time_MCR = mean(summary_table_MCR(:,5));
 variance_total_train_time_MCR = var(summary_table_MCR(:,5));
 
 
-% Time how long it takes to perform 30 Random Forest iterations with Bayesian Optimisation. 
+% Time how long it takes to perform 20 Random Forest iterations with Bayesian Optimisation. 
 % This will be used as a comparison against the time taken to perform  30
 % NB iterations with Bayesian Optimisation
 tic;
@@ -68,7 +85,8 @@ RF_hyperparameter_search_time = toc;
 
 %% Run Bayesian Optimisation using ce as error value to evaluate objective 20 times and calculate mean and variance values for each hyperparameter
 
-% Run bayesopt using ce as error value to evaluate objective function 20 times and calculate the mean hyperparamter values for RF
+% Run bayesopt using ce as error value to evaluate objective function 20
+% times and calculate the mean and variance hyperparamter values for RF
 % Initialise summary table
 summary_table_CE = [];
 for i = 1:5
@@ -97,7 +115,7 @@ mean_total_train_time_CE = mean(summary_table_CE(:,5));
 variance_total_train_time_CE = var(summary_table_CE(:,5));
 
 
-%% Train model using optimal hyperparamater settings learned from Bayesian Optimisation steps on all the training data
+%% Train model using optimal hyperparamater settings learned from Bayesian Optimisation (previous 2 sections of code) steps on all the training data
 
 
 % As defined by mean estimated model as defined from 20 x Bayesian Optimisation runs using
@@ -116,7 +134,7 @@ final_mdl_MCR = TreeBagger(final_numTrees_MCR,In_high_imp_variables, train_label
                         'NumPredictorsToSample', final_numPTS_MCR);
 
 order = unique(train_labels); % Order of the group labels                    
-% Calculate Confusion matrix
+% Calculate Confusion matrix using MCR loss function
 confusion_mat_MCR = confusionmat(test_labels,...
             categorical(...
             cellfun(@str2num,... % convert cell array of character vectors to a cell array of numerics
@@ -147,7 +165,7 @@ final_mdl_CE = TreeBagger(final_numTrees_CE,In_high_imp_variables, train_labels,
                         'MinLeafSize',final_minLS_CE,...
                         'NumPredictorsToSample', final_numPTS_CE);
                     
-% Calculate Confusion matrix
+% Calculate Confusion matrix using CE loss function
 confusion_mat_CE = confusionmat(test_labels,...
             categorical(...
             cellfun(@str2num,... % convert cell array of character vectors to a cell array of numerics
@@ -160,54 +178,28 @@ confusion_mat_CE = confusionmat(test_labels,...
             );
         
           
-% Draw Confusion matrix                   
-confusionchart(confusion_mat_MCR, {'Healthy'; 'Heart_Disease'})
-confusionchart(confusion_mat_CE, {'Healthy'; 'Heart_Disease'})
+% Draw Confusion matrix for optimal models derived using MCR and CE loss
+% functions respectively     
+figure;
+confusionchart(confusion_mat_MCR, {'Healthy'; 'Heart_Disease'});
+figure
+confusionchart(confusion_mat_CE, {'Healthy'; 'Heart_Disease'});
 
 
-% Initialise figure plots
+% Initialise figure plots and draw bar charts showing performance metrics
+% and ROC curves comparing the use of MCR and CE as loss functions on all
+% the training data
 figure;
 hold on;
 
 [recall_MCR, precision_MCR, F1_MCR, specificity_MCR,accuracy_MCR, AUC_MCR] = get_performance(final_mdl_MCR,confusion_mat_MCR, test_features, test_labels);
+
 [recall_CE, precision_CE, F1_CE, specificity_CE,accuracy_CE, AUC_CE] = get_performance(final_mdl_CE,confusion_mat_CE, test_features, test_labels);
-
-
   
 hold off;
+ax = gca; % grab current axis
+ax.FontSize = 16 % Alter font size
+ax.FontWeight = 'bold';
 
-
-
-%Function to report model performance
-function [recall, precision, F1, specificity,accuracy, AUC] = get_performance(mdl,confusion_mat,test_features, test_labels)
-
-recall = confusion_mat(1)/(confusion_mat(1)+ confusion_mat(3));
-precision = confusion_mat(1)/(confusion_mat(1) + confusion_mat(2));
-F1 = (2*(precision * recall))/(precision + recall);
-specificity = confusion_mat(4)/(confusion_mat(4) + confusion_mat(3));
-accuracy = (confusion_mat(1) + confusion_mat(4))/sum([confusion_mat(1),confusion_mat(2),confusion_mat(3),confusion_mat(4)]);
-
-fprintf('Recall %4.2f\n',recall);
-fprintf('Precision %4.2f\n',precision);
-fprintf('F1 %4.2f\n',F1);
-fprintf('Specificity %4.2f\n',specificity);
-fprintf('Accuracy %4.2f\n',accuracy);
-
-% Draw ROC curve
-[yhat,scores,cost] = predict(mdl,test_features);
-
-%need to find NB method to calculate class scores
-%should be able to use predict function
-
-% calc fpr and tpr at different threshold as defined by T for ROC curve
-[fpr,tpr, T, AUC] = perfcurve(test_labels,scores(:,2), 1);
-
-% Plot ROC curve
-
-plot(fpr,tpr)
-
-xlabel('False Positive Rate')
-ylabel('True Positive Rate')
-
-
-end
+% add legend entries
+lg = legend('Cross Entropy', 'MCR');
