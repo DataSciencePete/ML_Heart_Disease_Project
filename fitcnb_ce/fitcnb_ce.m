@@ -236,7 +236,7 @@ function this = fitcnb_ce(X,Y,varargin)
 %   classreg.learning.partition.ClassificationPartitionedModel. 
 
 %   Copyright 2014-2018 The MathWorks, Inc.
-varargin
+
 if nargin > 1
     Y = convertStringsToChars(Y);
 end
