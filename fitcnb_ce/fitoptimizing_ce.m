@@ -13,9 +13,9 @@ IsTallData = istall(Predictors);
 
 % Add conditional statement to allow fitcnb_ce to be run irrespective of
 % Matlab version
-if version('-release') ~= '2018a'
+if version('-release') ~= '2018b'
     [OptimizeHyperparametersArg, HyperparameterOptimizationOptions, FitFunctionArgs] = ...
-        parseFitoptimizingArgs(varargin);
+        parseFitoptimizingArgs_2018a_version.m(varargin);
 else
     [OptimizeHyperparametersArg, HyperparameterOptimizationOptions, FitFunctionArgs] = ...
         classreg.learning.paramoptim.parseFitoptimizingArgs(varargin, IsTallData);
