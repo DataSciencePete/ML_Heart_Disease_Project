@@ -1,5 +1,5 @@
-function loss = myCVlossfcn_ce(params,In,Out,opts,cvp)
-                               
+function loss = lossFcn_RF_CE(params,In,Out,opts,cvp)
+
     function cross_ent = ce_funct(XTRAIN,YTRAIN,XTEST,YTEST)
             [~, prob] = predict(TreeBagger(...
                                 params.numTrees,XTRAIN,YTRAIN,...
@@ -9,10 +9,10 @@ function loss = myCVlossfcn_ce(params,In,Out,opts,cvp)
                                 'MinLeafSize',params.minLS,...
                                 'NumPredictorsToSample', params.numPTS),...
                                     XTEST...
-                                   ); 
+                                   );
          % Calculate CE for each k-fold partition
          kfold_ce = [];
-         for row = 1:size(YTEST,1) 
+         for row = 1:size(YTEST,1)
              size(YTEST,1)
              YTEST(row)
              prob(:,(double(YTEST(row))))
@@ -21,10 +21,10 @@ function loss = myCVlossfcn_ce(params,In,Out,opts,cvp)
              % Generate a vector of ce values for each k-fold
              kfold_ce = [kfold_ce ce];
 %              cross_ent =  size(prob(1,:,:));
-         end 
+         end
          % Calculate average ce for each k-fold test set
          cross_ent = -sum(kfold_ce);
-             
+
     end
 
 % Acquire the matrix of probabilities for each k-fold test

@@ -3,24 +3,20 @@
 addpath(genpath('../'));
 [train_features, train_labels, test_features, test_labels, X_header,cvp] = load_heart_csv('heart.csv', 'table', 'categorical');
 
-% Check dependencies for running devicespec.m
-[~, plist] = matlab.codetools.requiredFilesAndProducts('devicespec.m')
-
-% Requires installation of 'Parallel Computing Toolbox' and 'MATLAB
-% Distributed Computing Server' but if conditional allows you to skip use
-% of devicespec() if dependencies not installed. This will cause treebagger
-% to take longer to run
-if contains([plist.Name],'Parallel Computing Toolboox')
+% Check for dependencies
+v = ver();
+if any(strcmp('Parallel Computing Toolbox',{v.Name}))
     par = devicespec(); % see script file devicespec.m
 else
-    par = statset('UseParallel', false);
+    fprintf('Skipping device specification, parallel computing toolbox not installed\n');
+    par = statset('UseParallel',false);
 end
 %%
 % Create data cross validation partition object
-% Create 10-folds cross-validation partition for data. 
+% Create 10-folds cross-validation partition for data.
 % Each subsample has roughly equal size and roughly the same class
 % proportions as in original data set
-cp = cvpartition(train_labels,'KFold',10);  
+cp = cvpartition(train_labels,'KFold',10);
 
 
 % Calculate mean prediction importance value for each predictor over
@@ -40,10 +36,10 @@ RFmdl = TreeBagger(50,XTRAIN,YTRAIN,...
            'Options',par,...
            'PredictorSelection','curvature',...
            'OOBPredictorImportance','on');
-% Calculate predictor importance for each feature       
+% Calculate predictor importance for each feature
 PredImp = RFmdl.OOBPermutedPredictorDeltaError;
-% Populate output matrix 
-PredImp_matrix = [PredImp_matrix; PredImp]; 
+% Populate output matrix
+PredImp_matrix = [PredImp_matrix; PredImp];
 
 end
 
