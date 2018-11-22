@@ -24,11 +24,38 @@ fprintf('Running grid search of features using kernel and normal distributions f
 Naive_Bayes_man_gs(train_features_std,train_labels,X_header,cp)
 
 
+%Take the model parameters identified by the CE metric and compute accuracy to see
+%if CE provides a better training metric
+
+%BayesOpt model
+CNBMdl_CE_BO = fitcnb(train_features,train_labels,'DistributionNames','kernel','Width',44.651);
+confusion_mat_CE_BO = confusionmat(test_labels,predict(CNBMdl_final,test_features),'Order', order);
+fprintf('Best cross entropy trained model using Bayesopt for parameter search\n');
+get_performance(CNBMdl_CE_BO,confusion_mat_CE_BO,train_features, train_labels);
+
+%Grid search
+CNBMdl_CE_GS = fitcnb(train_features,train_labels,'DistributionNames','kernel','Width',36.337);
+confusion_mat_CE_GS = confusionmat(test_labels,predict(CNBMdl_final,test_features),'Order', order);
+fprintf('Best cross entropy trained model using Grid seach for parameter search\n');
+get_performance(CNBMdl_CE_GS,confusion_mat_CE_GS,train_features, train_labels);
+
+%manual grid search
+distributions_CE_manGS = {'kernel','mvmn','mvmn','kernel','normal','mvmn','mvmn','kernel','mvmn','normal','mvmn','mvmn','mvmn'};
+CNBMdl_CE_manGS = fitcnb(train_features,train_labels,'DistributionNames',distributions_CE_manGS);
+confusion_mat_CE_manGS = confusionmat(test_labels,predict(CNBMdl_final,test_features),'Order', order);
+fprintf('Best cross entropy trained model using manual Grid seach for parameter search\n');
+get_performance(CNBMdl_CE_manGS,confusion_mat_CE_manGS,train_features, train_labels);
+
+
+%The best accuracy we can achieve using cross entropy as a training metric
+%is less than using MCR as a training metric. The above models all achieve
+%78.85% accuracy compared to 84.43% accuracy from using missclassification rate
+%as the training metric
+
 %Test optimising the kernel width to see if this gives any additional
-%improvement for the best result from the grid search
+%improvement for the best result from the grid search using MCR as metric
 distributions = {'normal','mvmn','mvmn','kernel','normal','mvmn','mvmn','kernel','mvmn','normal','mvmn','mvmn','mvmn'};
 hpOO3 = struct('CVPartition',cp,'Verbose',2,'Optimizer','gridsearch');
-
 
 tic;
 CVNBMdl3 = fitcnb(train_features,train_labels,'DistributionNames',distributions, ...
@@ -57,27 +84,6 @@ if any(strcmp('Deep Learning Toolbox',{v.Name}))
     confusionchart(confusion_mat, {'Healthy'; 'Heart_Disease'})
 end
 
-%Calculate recall, precision and F1 score
-recall = confusion_mat(1)/(confusion_mat(1)+ confusion_mat(3));
-precision = confusion_mat(1)/(confusion_mat(1) + confusion_mat(2));
-F1 = (2*(precision * recall))/(precision + recall);
-specificity = confusion_mat(4)/(confusion_mat(4) + confusion_mat(3));
-accuracy = (confusion_mat(1) + confusion_mat(4))/sum([confusion_mat(1),confusion_mat(2),confusion_mat(3),confusion_mat(4)]);
-
-
-% Draw ROC curve
-[yhat,scores,cost] = predict(CNBMdl_final,test_features);
-
-%need to find NB method to calculate class scores
-%should be able to use predict function
-
-% calc fpr and tpr at different threshold as defined by T for ROC curve
-[fpr,tpr, T, AUC] = perfcurve(test_labels,scores(:,2), 1);
-
-% Plot ROC curve
-figure
-plot(fpr,tpr)
-xlabel('False Positive Rate')
-ylabel('True Positive Rate')
-
+%Plot ROC curve for NB final model
+get_performance(CNBMdl_final,confusion_mat,train_features, train_labels);
 

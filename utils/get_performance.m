@@ -7,11 +7,11 @@ F1 = (2*(precision * recall))/(precision + recall);
 specificity = confusion_mat(4)/(confusion_mat(4) + confusion_mat(3));
 accuracy = (confusion_mat(1) + confusion_mat(4))/sum([confusion_mat(1),confusion_mat(2),confusion_mat(3),confusion_mat(4)]);
 
-fprintf('Recall %4.2f\n',recall);
-fprintf('Precision %4.2f\n',precision);
-fprintf('F1 %4.2f\n',F1);
-fprintf('Specificity %4.2f\n',specificity);
-fprintf('Accuracy %4.2f\n',accuracy);
+fprintf('Recall %6.4f\n',recall);
+fprintf('Precision %6.4f\n',precision);
+fprintf('F1 %6.4f\n',F1);
+fprintf('Specificity %6.4f\n',specificity);
+fprintf('Accuracy %6.4f\n',accuracy);
 
 % Draw ROC curve
 [yhat,scores,cost] = predict(mdl,train_features);
