@@ -10,8 +10,16 @@ IsTallData = istall(Predictors);
 % end
 % Parse and check args
 % verifyNoValidationArgs(varargin);
-[OptimizeHyperparametersArg, HyperparameterOptimizationOptions, FitFunctionArgs] = ...
-    classreg.learning.paramoptim.parseFitoptimizingArgs(varargin);
+
+% Add conditional statement to allow fitcnb_ce to be run irrespective of
+% Matlab version
+if version('-release') ~= '2018a'
+    [OptimizeHyperparametersArg, HyperparameterOptimizationOptions, FitFunctionArgs] = ...
+        parseFitoptimizingArgs(varargin);
+else
+    [OptimizeHyperparametersArg, HyperparameterOptimizationOptions, FitFunctionArgs] = ...
+        classreg.learning.paramoptim.parseFitoptimizingArgs(varargin, IsTallData);
+end
 % Create optimization info and validation args
 BOInfo = classreg.learning.paramoptim.BayesoptInfo.makeBayesoptInfo(FitFunctionName, Predictors, Response, FitFunctionArgs);
 VariableDescriptions = getVariableDescriptions(BOInfo, OptimizeHyperparametersArg);
