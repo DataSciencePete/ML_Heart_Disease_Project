@@ -1,11 +1,13 @@
 function [train_features, train_labels, test_features, test_labels, ...
-    X_header, cvp] = load_heart_csv(filepath,featureType,labelType)
+    X_header, cvp, heart_matrix] = load_heart_csv(filepath,featureType,labelType)
 % Returns training and test data
 
 %Fix the random seed to ensure the same data and cvpartition is returned
 rng(1)
 
 data = csvread(filepath,1,0);
+
+heart_matrix = data;
 lab = data(:,size(data,2));
 feat = data(:,1:size(data,2)-1);
 clear data
