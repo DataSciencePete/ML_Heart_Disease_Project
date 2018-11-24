@@ -1,7 +1,8 @@
 %% Load data into Matlab
 % Add folders to the path
 addpath(genpath('../'));
-[train_features, train_labels, test_features, test_labels, X_header,cvp] = load_heart_csv('heart.csv', 'table', 'categorical');
+[train_features, train_labels, test_features, test_labels, X_header,cvp, heart_matrix] = load_heart_csv('heart.csv', 'table', 'categorical');
+
 
 % Select columns from heart_matrix relating to categorical data
 z = [1 4 5 8 10];
@@ -20,7 +21,7 @@ for i = z
  
 end
 
-%% Draw bar charts for frequency data
+%% Draw bar charts for continuous data
 %% Sex - healthy/heart disease stacked bar chart
 % Slice matrix for healthy and heart disease and extract sex columns
 healthy = heart_matrix(heart_matrix(:,end) == 0,2);
