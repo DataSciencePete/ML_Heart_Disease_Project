@@ -29,6 +29,9 @@ The following can be used but are skipped if not present:
   
 ## Exploratory Data Analysis (EDA folder)
 
+* boxpolts.m
+  Generate boxplots for categorical predictor features and bar charts showing frequuency values for categorical data.
+
 ## NB tuning folder
 
 * Run_NB_Analysis.m
