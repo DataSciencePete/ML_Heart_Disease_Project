@@ -1,9 +1,13 @@
-[train_features, train_labels, test_features, test_labels, heart_matrix, X_header, cvp] = loadheart('/Users/kevinryan/Documents/DataScienceMSc/MachineLearning/Coursework/heart.csv'); % see script file loadhear.m
+%% Load data into Matlab
+% Add folders to the path
+addpath(genpath('../'));
+[train_features, train_labels, test_features, test_labels, X_header,cvp] = load_heart_csv('heart.csv', 'table', 'categorical');
 
+% Select columns from heart_matrix relating to categorical data
 z = [1 4 5 8 10];
 titles = {'age - Age'; 'trestbp - Resting Blood Pressure'; 'chol - Serum Cholesterol mg/dl';...
     'thalach - Maximum Heart Rate Achieved'; 'oldpeak - ST Depression Induced by Exercise Relative to Rest'}; 
-
+% Draw boxplots for all categorical data
 for i = z
  figure(find(z == i) + 8);
  boxplot(heart_matrix(:,i), heart_matrix(:,end))
@@ -15,9 +19,8 @@ for i = z
  title(titles(find(z == i)), 'FontSize', 18);
  
 end
-% boxplots_predictors = arrayfun(@(z) boxplots(heart_matrix(:,x)), z);
 
-
+%% Draw bar charts for frequency data
 %% Sex - healthy/heart disease stacked bar chart
 % Slice matrix for healthy and heart disease and extract sex columns
 healthy = heart_matrix(heart_matrix(:,end) == 0,2);
