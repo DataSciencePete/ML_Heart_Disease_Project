@@ -23,47 +23,47 @@ The following can be used but are skipped if not present:
 * Deep learning toolbox (required to plot confusion charts)
 
 ## Data folder
-* load_heart_csv.m
 
-  Loads the datafile containing the heart data named `heart.csv` from the current directory and splits the data into training and test sets, returning the labels and features for the training and test sets as well as a `cvpartition` object. The script fixes a random seed so that the cross validation partition and split of test and training data are deterministic to allow for repeatability.
+### load_heart_csv.m
+
+Loads the datafile containing the heart data named `heart.csv` from the current directory and splits the data into training and test sets, returning the labels and features for the training and test sets as well as a `cvpartition` object. The script fixes a random seed so that the cross validation partition and split of test and training data are deterministic to allow for repeatability.
   
 ## Exploratory Data Analysis (EDA folder)
 
-* boxpolts.m
-  Generate boxplots for categorical predictor features and bar charts showing frequuency values for categorical data.
+### boxpolts.m
+
+Generate boxplots for categorical predictor features and bar charts showing frequuency values for categorical data
+
+### EDA.ipynb
+
+Performs basic exploratory analysis on the data and generates a heat map of correlations between features.
 
 ## NB tuning folder
 
-* Run_NB_Analysis.m
+### Run_NB_Analysis.m
+This is the top-level script running experiments on the Naive Bayes model. The script runs Bayesian optimisation and a grid search testing normal and kernel distributions and optimising kernel width on all features. A manual grid search is also run where all combinations of distribution were tried on continuous features. The data is standardised and the same process is re-run. The `Naive_Bayes_Optimisation.m` and `Naive_Bayes_man_gs.m` functions are called to run the optimisations. The script then considers the differences between models trained using cross entropy as a loss function compared to MCR (misclassification rate). Finally the script runs and evaluates the best model selected from these experiments.
 
-  This is the top-level script running experiments on the Naive Bayes model. The script runs Bayesian optimisation and a grid search testing normal and kernel distributions and optimising kernel width on all features. A manual grid search is also run where all combinations of distribution were tried on continuous features. The data is standardised and the same process is re-run. The `Naive_Bayes_Optimisation.m` and `Naive_Bayes_man_gs.m` functions are called to run the optimisations.
-
-* Naive_Bayes_Optimisation.m
-
+### Naive_Bayes_Optimisation.m
 Function to run Bayesian Optimisation and grid search given some features, labels and a cross validation partition. Prints the runtime for these optimisations to the terminal.
 
-* Naive_Bayes_man_gs.m
-
+### Naive_Bayes_man_gs.m
 Runs a manual grid search of all possible combinations of distribution over the set of features. Categorical features are fixed to the multivariable multinomial distribution `mvmm` and while kernel `kernel` and gaussian `normal` distributions are used for the continuous features.
-
 
 ## RF tuning folder
 
-* feature_selection.m
-
-  Performs k-fold CV using RF analysis to calculate predictor importance for all included variables. Predictor importance is calculated for each k-fold   sample and then average values are calulated for each predictor. Average values are then displayed in a bar chart. 
+### feature_selection.m
+Performs k-fold CV using RF analysis to calculate predictor importance for all included variables. Predictor importance is calculated for each k-fold   sample and then average values are calulated for each predictor. Average values are then displayed in a bar chart. 
   
-* loss_function_comparison.m
+### loss_function_comparison.m
 
-  Sets up 10-fold CV and performs RF analysis using the Matlab implementation Treebagger.
-  Performs search for optimal Treebagger hyperparameters MinLeafSize (Minimum number of observations per tree leaf), NumPredictorsToSample (Number of variables to select at random for each decision split) and numTrees (number of trees to include in ensembl random forest) using Bayesian Optimisation.
+Sets up 10-fold CV and performs RF analysis using the Matlab implementation Treebagger. Performs search for optimal Treebagger hyperparameters MinLeafSize (Minimum number of observations per tree leaf), NumPredictorsToSample (Number of variables to select at random for each decision split) and numTrees (number of trees to include in ensembl random forest) using Bayesian Optimisation.
   Performs 20 cycles of Bayesian Optimisation sampling 30 different points of the hyperparameter search space. 
   Error assessed using either MCR (**`lossFcn_RF_MCR.m`** found in RF tuning folder) or Cross Entropy (CE) (**`lossFcn_RF_CE.m`** found in RF tuning folder) loss functions. 
   Calculates mean and sd values for different performance metrics (recall, precision, F1, specificity, accuracy, AUC) over each 20 cycle run.
   Returns bar chart of mean performance metrics (recall, precision, F1, specificity, accuracy, AUC) and ROC curve showing best performing models    generated using MCR and CE.
 
 ## Model Comparison folder
-* Model_Comparison.m 
+### Model_Comparison.m 
   
   Trains optimised NB and RF models using optimised hyperparamters (optimal parameters are hard-coded for ease) generated from running Run_NB_Analysis.m for NB and feature_selection.m for RF.
   on the complete training dataset. Generated models are used to make predictions for the test set data. Performance metrics are generated (recall, precision, F1, specificity, accuracy, AUC) for each model and a bar chart is returned comparing the performance of NB and RF models on the test set data. A ROC curveis also generated comparing NB and RF models. 
@@ -74,7 +74,7 @@ Adapted Matlab's 'bayesopt' fitcnb implementation to use cross entropy instead o
 
 
 ## utils folder
-* devicespec.m
+### devicespec.m
   
   Function script which calculates specification for the machine being used to run the analysis and implements parallel pool environment.
   * Finds presence/absence of GPU.
@@ -82,7 +82,7 @@ Adapted Matlab's 'bayesopt' fitcnb implementation to use cross entropy instead o
   * Finds number of CPUSs avaialable.
   * Implement a paralell pool environment using the available resources.
   
-* get_performance.m
+### get_performance.m
   
   Function script which takes as input a classification model, a confusion matrix for the inputted classification model, matrix of input features and a corresponding array of labels for the inputted features. Returns the following performance metrics 
   * recall

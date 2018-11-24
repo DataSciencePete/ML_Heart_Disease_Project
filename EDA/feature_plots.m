@@ -38,9 +38,9 @@ figure(1);
 bc = bar(counts, 'stacked');
 % Add x axis labels
 xvals = {'Female'; 'Male'};
-set(gca,'XtickLabel',xvals);
+set(gca,'XtickLabel',xvals,'FontSize',18);
 legendvals = {'Healthy'; 'Heart Disease'};
-legend(bc, legendvals, 'Location', 'northwest');
+legend(bc, legendvals, 'Location', 'northwest','FontSize',18);
 title('sex - Female or Male', 'FontSize', 18);
 
 %% cp Chest pain - healthy/heart disease stacked bar chart
@@ -63,10 +63,11 @@ figure(2);
 bc =bar(counts, 'stacked');
 % Add x axis labels
 xvals = {'asymptomatic'; 'non-anginal pain';'atypical angina '; 'angina'};
-set(gca,'XtickLabel',xvals);
+set(gca,'XtickLabel',xvals,'FontSize',18,'FontWeight','bold');
 legendvals = {'Healthy'; 'Heart Disease'};
-legend(bc, legendvals, 'Location', 'northwest');
-title('cp - Chest pain type', 'FontSize', 18);
+legend(bc, legendvals, 'Location', 'northwest','FontSize',18);
+title('cp - Chest pain type', 'FontSize', 30);
+xtickangle(45);
 
 %% fbs - healthy/heart disease stacked bar chart
 
@@ -89,9 +90,9 @@ figure(3);
 bc = bar(counts, 'stacked');
 % Add x axis labels
 xvals = {'fbs <= 120 mg/dl)'; 'fbs > 120 mg/dl)'};
-set(gca,'XtickLabel',xvals);
+set(gca,'XtickLabel',xvals,'FontSize',18);
 legendvals = {'Healthy'; 'Heart Disease'};
-legend(bc, legendvals, 'Location', 'northwest');
+legend(bc, legendvals, 'Location', 'northwest','FontSize',18);
 title('fbs - Fasting blood sugar', 'FontSize', 18);
 
 
@@ -113,10 +114,10 @@ figure(4);
 bc = bar(counts, 'stacked');
 % Add x axis labels
 xvals = {'Normal'; 'ST-T wave abnormality '; 'Probable/Definite''\newline''ventricular hypertrophy'};
-set(gca,'XtickLabel',xvals);
+set(gca,'XtickLabel',xvals,'FontSize',18);
 
 legendvals = {'Healthy'; 'Heart Disease'};
-legend(bc, legendvals, 'Location', 'northwest');
+legend(bc, legendvals, 'Location', 'northwest','FontSize',18);
 title('restecg - Resting electrocardiography results', 'FontSize', 18);
 
 %% exang - healthy/heart disease stacked bar chart
@@ -136,11 +137,11 @@ figure(5);
 bc = bar(counts, 'stacked');
 % Add x axis labels
 xvals = {'Absence'; 'Presence'};
-set(gca,'XtickLabel',xvals);
+set(gca,'XtickLabel',xvals,'FontSize',18);
 
 xlabel('Exercise Induced Angina');
 legendvals = {'Healthy'; 'Heart Disease'};
-legend(bc, legendvals, 'Location', 'northwest');
+legend(bc, legendvals, 'Location', 'northwest','FontSize',18);
 title('exang - Exercise induced angina', 'FontSize', 18);
 
 
@@ -161,10 +162,10 @@ figure(6);
 bc = bar(counts, 'stacked');
 % Add x axis labels
 xvals = {'Upsloping'; 'Flat'; 'Downsloping'};
-set(gca,'XtickLabel',xvals);
+set(gca,'XtickLabel',xvals,'FontSize',18);
 
 legendvals = {'Healthy'; 'Heart Disease'};
-legend(bc, legendvals, 'Location', 'northwest');
+legend(bc, legendvals, 'Location', 'northwest','FontSize',18);
 title('slope - Slope of peak exercise ST segment', 'FontSize', 18);
 
 %% ca - healthy/heart disease stacked bar chart
@@ -184,11 +185,11 @@ figure(7);
 bc = bar(counts, 'stacked');
 % Add x axis labels
 xvals = {'0'; '1'; '2'; '3'};
-set(gca,'XtickLabel',xvals);
+set(gca,'XtickLabel',xvals,'FontSize',18);
 
 xlabel('# of blocked vessels');
 legendvals = {'Healthy'; 'Heart Disease'};
-legend(bc, legendvals, 'Location', 'northwest');
+legend(bc, legendvals, 'Location', 'northwest','FontSize',18);
 title('ca - Number of major vessels colored by fluoroscopy', 'FontSize', 18);
 
 %% thal - healthy/heart disease stacked bar chart
@@ -211,10 +212,10 @@ figure(8);
 bc = bar(counts, 'stacked');
 % Add x axis labels
 xvals = {'Normal'; 'Reversible defect'; 'Fixed defect'};
-set(gca,'XtickLabel',xvals);
+set(gca,'XtickLabel',xvals,'FontSize',18);
 
 legendvals = {'Healthy'; 'Heart Disease'};
-legend(bc, legendvals, 'Location', 'northwest');
+legend(bc, legendvals, 'Location', 'northwest','FontSize',18);
 title('thal - Thalium stress test result', 'FontSize', 18);
 
 %% 
