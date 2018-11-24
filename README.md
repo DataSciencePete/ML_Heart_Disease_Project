@@ -30,28 +30,25 @@ The following can be used but are skipped if not present:
 ## Exploratory Data Analysis (EDA folder)
 
 * boxpolts.m
-  Generate boxplots for categorical predictor features and bar charts showing frequuency values for categorical data.
+Generate boxplots for categorical predictor features and bar charts showing frequuency values for categorical data
+* EDA.ipynb
+Performs basic exploratory analysis on the data and generates a heat map of correlations between features.
 
 ## NB tuning folder
 
 * Run_NB_Analysis.m
-
-  This is the top-level script running experiments on the Naive Bayes model. The script runs Bayesian optimisation and a grid search testing normal and kernel distributions and optimising kernel width on all features. A manual grid search is also run where all combinations of distribution were tried on continuous features. The data is standardised and the same process is re-run. The `Naive_Bayes_Optimisation.m` and `Naive_Bayes_man_gs.m` functions are called to run the optimisations.
+This is the top-level script running experiments on the Naive Bayes model. The script runs Bayesian optimisation and a grid search testing normal and kernel distributions and optimising kernel width on all features. A manual grid search is also run where all combinations of distribution were tried on continuous features. The data is standardised and the same process is re-run. The `Naive_Bayes_Optimisation.m` and `Naive_Bayes_man_gs.m` functions are called to run the optimisations. The script then considers the differences between models trained using cross entropy as a loss function compared to MCR (misclassification rate). Finally the script runs and evaluates the best model selected from these experiments.
 
 * Naive_Bayes_Optimisation.m
-
 Function to run Bayesian Optimisation and grid search given some features, labels and a cross validation partition. Prints the runtime for these optimisations to the terminal.
 
 * Naive_Bayes_man_gs.m
-
 Runs a manual grid search of all possible combinations of distribution over the set of features. Categorical features are fixed to the multivariable multinomial distribution `mvmm` and while kernel `kernel` and gaussian `normal` distributions are used for the continuous features.
-
 
 ## RF tuning folder
 
 * feature_selection.m
-
-  Performs k-fold CV using RF analysis to calculate predictor importance for all included variables. Predictor importance is calculated for each k-fold   sample and then average values are calulated for each predictor. Average values are then displayed in a bar chart. 
+Performs k-fold CV using RF analysis to calculate predictor importance for all included variables. Predictor importance is calculated for each k-fold   sample and then average values are calulated for each predictor. Average values are then displayed in a bar chart. 
   
 * loss_function_comparison.m
 
