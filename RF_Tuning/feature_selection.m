@@ -1,7 +1,7 @@
 %% Load data into Matlab
 % Add folders to the path
 addpath(genpath('../'));
-[train_features, train_labels, test_features, test_labels, X_header,cvp] = load_heart_csv('heart.csv', 'table', 'categorical');
+[train_features, train_labels, test_features, test_labels, X_header, cvp] = load_heart_csv('heart.csv', 'table', 'categorical');
 
 % Check for dependencies
 v = ver();
