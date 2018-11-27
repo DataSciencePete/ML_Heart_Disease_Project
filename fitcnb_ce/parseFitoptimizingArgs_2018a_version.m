@@ -3,16 +3,16 @@ function [OptimizeHyperparameters, HyperparameterOptimizationOptions, RemainingA
 % Parse the two parameters 'OptimizeHyperparameters' and
 % 'HyperparameterOptimizationOptions'. Fill options defaults.
     
-%   Copyright 2016-2018 The MathWorks, Inc.
+%   Copyright 2016-2017 The MathWorks, Inc.
 
 [OptimizeHyperparameters, Opts, ~, RemainingArgs] = internal.stats.parseArgs(...
     {'OptimizeHyperparameters', 'HyperparameterOptimizationOptions'}, ...
     {'auto', []}, ...
     Args{:});
-HyperparameterOptimizationOptions = validateAndFillParameterOptimizationOptions(Opts, IsTallData);
+HyperparameterOptimizationOptions = validateAndFillParameterOptimizationOptions(Opts);
 end
 
-function Opts = validateAndFillParameterOptimizationOptions(Opts, IsTallData)
+function Opts = validateAndFillParameterOptimizationOptions(Opts)
 if isempty(Opts)
     Opts = struct;
 elseif ~isstruct(Opts)
@@ -72,14 +72,15 @@ if ~isempty(Opts.Verbose)
 else
     Opts.Verbose = 1;
 end
-% Validate and fill UseParallel. THIS MUST PRECEDE validateAndFillValidationOptions:
+% Validate and fill UseParallel. THIS MUST PRECEDE
+% validateAndFillValidationOptions:
 if ~isempty(Opts.UseParallel)
     validateUseParallel(Opts.UseParallel);
 else
     Opts.UseParallel = false;
 end
 % Validate and fill validation options. THIS MUST FOLLOW validateUseParallel
-Opts = validateAndFillValidationOptions(Opts, IsTallData);
+Opts = validateAndFillValidationOptions(Opts);
 end
 
 function validateOptimizer(Optimizer)
@@ -153,22 +154,16 @@ if Repartition && ~isempty(Options.CVPartition)
 end
 end
 
-function Options = validateAndFillValidationOptions(Options, IsTallData)
+function Options = validateAndFillValidationOptions(Options)
 % Assumes UseParallel has been filled by this point.
 NumPassed = ~isempty(Options.CVPartition) + ~isempty(Options.Holdout) + ~isempty(Options.KFold);
 if NumPassed > 1
     classreg.learning.paramoptim.err('MultipleValidationArgs');
 elseif NumPassed == 0
-    Options = chooseDefaultValidation(Options, IsTallData);
+    Options.KFold = 5;
 elseif ~isempty(Options.CVPartition)
     if ~isa(Options.CVPartition, 'cvpartition')
         classreg.learning.paramoptim.err('CVPartitionType');
-    end
-    if isequal(Options.CVPartition.Type, 'kfold') && IsTallData
-        classreg.learning.paramoptim.err('KFoldNotSupportedForTall');
-    end
-    if isequal(Options.CVPartition.Type, 'leaveout') && IsTallData
-        classreg.learning.paramoptim.err('LeaveoutNotSupportedForTall');
     end
 elseif ~isempty(Options.Holdout)
     v = Options.Holdout;
@@ -176,9 +171,6 @@ elseif ~isempty(Options.Holdout)
         classreg.learning.paramoptim.err('Holdout');
     end
 elseif ~isempty(Options.KFold)
-    if IsTallData
-        classreg.learning.paramoptim.err('KFoldNotSupportedForTall');
-    end
     v = Options.KFold;
     if ~(bayesoptim.isLowerBoundedIntScalar(v,2))
         classreg.learning.paramoptim.err('KFold');
@@ -189,14 +181,6 @@ if ~isempty(Options.Repartition)
     validateRepartition(Options.Repartition, Options);
 else
     Options.Repartition = false;
-end
-end
-
-function Options = chooseDefaultValidation(Options, IsTallData)
-if IsTallData
-    Options.Holdout = .2;
-else
-    Options.KFold = 5;
 end
 end
 
