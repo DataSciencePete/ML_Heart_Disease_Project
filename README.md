@@ -16,7 +16,8 @@
 
 ## Prerequisites
 * Matlab version 2018a
-* Statistics toolbox
+* Statistics and Machine Learning Toolbox
+* Neural Network Toolbox
 
 The following can be used but are skipped if not present:
 * Parallel Computing Toolbox (required to optimise Random Forest computations for device)
