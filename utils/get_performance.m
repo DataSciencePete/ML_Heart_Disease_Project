@@ -24,10 +24,10 @@ fprintf('Accuracy %6.4f\n',accuracy);
 
 % Plot ROC curve
 
-plot(fpr,tpr, 'LineWidth',2)
+plot(fpr,tpr, 'LineWidth',2);
 
-xlabel('False Positive Rate')
-ylabel('True Positive Rate')
+xlabel('False Positive Rate');
+ylabel('True Positive Rate');
 
 
 end

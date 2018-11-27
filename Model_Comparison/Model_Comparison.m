@@ -68,7 +68,7 @@ RF_predict_test_time = toc;
 % Get performance data for test data and generate ROC curve
 [RF_recall_Test, RF_precision_Test, RF_F1_Test, RF_specificity_Test, RF_accuracy_Test, RF_AUC_Test] = get_performance(RF_final_mdl,RF_confusion_mat, test_features, test_labels);
 ax = gca; % grab current axis
-ax.FontSize = 16 % Alter font size
+ax.FontSize = 16; % Alter font size
 ax.FontWeight = 'bold';
 lg = legend('Naive Bayes', 'Random Forest');
   
@@ -82,14 +82,14 @@ model_metrics = [NB_recall_Test, NB_precision_Test, NB_F1_Test, NB_specificity_T
 % Draw bar chart comparing performance metrics on test data
 figure;
 bar_chart = barh(model_metrics');
-xlim([0.6,1]) % set y axis limits
+xlim([0.6,1]); % set y axis limits
 ax = gca; % grab handle to current axis
 % Add labels to each x tick
 ax.YTickLabel = {'Recall', 'Precision', 'F1', 'Specificity', 'Accuracy', 'AUC'};
 legendvals = {'RF'; 'NB'}; % Set legend names
 % change order of legend entries
 lg = legend([bar_chart(2), bar_chart(1)], legendvals, 'Location', 'southeast');
-ax.FontSize = 16 % Alter font size
+ax.FontSize = 16; % Alter font size
 ax.FontWeight = 'bold';
 
 
