@@ -15,7 +15,7 @@ IsTallData = istall(Predictors);
 % Matlab version
 if version('-release') ~= '2018b'
     [OptimizeHyperparametersArg, HyperparameterOptimizationOptions, FitFunctionArgs] = ...
-        parseFitoptimizingArgs_2018a_version.m(varargin);
+        parseFitoptimizingArgs_2018a_version(varargin);
 else
     [OptimizeHyperparametersArg, HyperparameterOptimizationOptions, FitFunctionArgs] = ...
         classreg.learning.paramoptim.parseFitoptimizingArgs(varargin, IsTallData);
